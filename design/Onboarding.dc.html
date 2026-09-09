@@ -1,0 +1,240 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Architects+Daughter&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+  * { box-sizing:border-box; }
+  body { margin:0; }
+  a { color:#E2653C; } a:hover { color:#C24E2A; }
+  .root { width:390px; height:844px; background:#FFFBF2; font-family:'IBM Plex Sans', ui-sans-serif, sans-serif; color:#3A2A1E; position:relative; overflow:hidden; display:flex; flex-direction:column; }
+  .topbar { flex:none; padding:22px 22px 6px; display:flex; align-items:center; justify-content:center; gap:7px; }
+  .dot { width:7px; height:7px; border-radius:50%; background:#E9E2CF; }
+  .dot.on { background:#E2653C; }
+  .screen { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:20px; padding:0 28px; overflow:hidden; }
+
+  .mascot { width:96px; height:96px; object-fit:cover; border-radius:20px; }
+  .title { font-family:'Architects Daughter', cursive; font-size:23px; text-align:center; line-height:1.3; }
+  .sub { font-size:13px; color:#8A7A63; text-align:center; margin-top:-10px; }
+
+  .field { width:100%; background:#FFFFFF; border:2px solid #F0EADA; border-radius:16px; padding:14px 16px; font-size:15px; font-weight:600; box-shadow:0 1px 2px rgba(58,42,30,.04), 0 2px 8px rgba(58,42,30,.03); }
+  .field-label { font-size:11px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:#8A7A63; margin-bottom:2px; }
+
+  .btn { display:flex; align-items:center; justify-content:center; gap:7px; width:100%; border-radius:22px; padding:16px; font-size:16px; font-weight:700; box-shadow:0 4px 0 rgba(0,0,0,0.12); cursor:pointer; }
+  .btn-yes { background:#E2653C; color:#FFFBF2; }
+  .btn-ok { background:#3D8C77; color:#FFFBF2; }
+  .btn-disabled { background:#F0EADA; color:#B8AA92; box-shadow:none; cursor:default; }
+  .btn-ghost { background:#FFFFFF; border:2px solid #E9E2CF; color:#3A2A1E; box-shadow:none; cursor:pointer; }
+
+  .gcard { width:100%; background:#FFFFFF; border:2px solid #F0EADA; border-radius:18px; padding:20px; display:flex; flex-direction:column; align-items:center; gap:14px; box-shadow:0 1px 2px rgba(58,42,30,.05), 0 2px 10px rgba(58,42,30,.05); }
+  .gcard.on { border-color:#3D8C77; background:#F1F8F4; }
+
+  .wallet-row { width:100%; display:flex; flex-direction:column; gap:8px; }
+  .wallet-label { display:flex; align-items:center; gap:8px; font-weight:700; font-size:14px; }
+  .chip-row { display:flex; gap:8px; flex-wrap:wrap; }
+  .chip { padding:9px 14px; border-radius:12px; font-size:12.5px; font-weight:600; border:2px solid; cursor:pointer; }
+
+  .methods-screen { align-items:stretch; justify-content:flex-start; overflow-y:auto; padding-top:6px; gap:16px; }
+  .methods-title { font-family:'Architects Daughter', cursive; font-size:22px; text-align:center; line-height:1.3; }
+  .methods-sub { font-size:12.5px; color:#8A7A63; text-align:center; margin-top:-8px; }
+  .group-title { font-size:11px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color:#8A7A63; margin-bottom:2px; }
+
+  .code-box { width:100%; background:#FFFFFF; border:2px dashed #E9E2CF; border-radius:18px; padding:22px; text-align:center; box-shadow:0 1px 2px rgba(58,42,30,.04), 0 2px 8px rgba(58,42,30,.03); }
+  .code-label { font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:#8A7A63; margin-bottom:8px; }
+  .code { font-family:'IBM Plex Sans', sans-serif; font-size:26px; font-weight:700; letter-spacing:.06em; }
+  .demo-link { margin-top:2px; font-size:12px; color:#6B5D48; display:inline-flex; align-items:center; gap:5px; cursor:pointer; }
+
+  .pair-row { display:flex; align-items:center; gap:14px; }
+  .avatar { width:56px; height:56px; border-radius:50%; overflow:hidden; box-shadow:0 1px 2px rgba(58,42,30,.12); }
+  .avatar img { width:100%; height:100%; object-fit:cover; display:block; }
+</style>
+</helmet>
+<div class="root">
+  <div class="topbar">
+    <div class="dot" style="background:{{dot1}}"></div>
+    <div class="dot" style="background:{{dot2}}"></div>
+    <div class="dot" style="background:{{dot3}}"></div>
+    <div class="dot" style="background:{{dot4}}"></div>
+    <div class="dot" style="background:{{dot5}}"></div>
+  </div>
+
+  <sc-if value="{{isWelcome}}" hint-placeholder-val="{{true}}">
+  <div class="screen">
+    <img class="mascot" src="dog-neutral.jpg">
+    <div class="title">¡Hola! Vamos a armar<br/>tu cuenta de Ambos</div>
+    <div class="field">
+      <div class="field-label">Tu nombre</div>
+      Marco
+    </div>
+    <div class="btn btn-yes" onClick="{{onNext}}">Continuar</div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{isGmail}}" hint-placeholder-val="{{false}}">
+  <div class="screen">
+    <div class="title">Conexión directa<br/>con Gmail</div>
+    <div class="sub">Así capturamos tus gastos solos, sin que tengas que escribir nada.</div>
+    <div class="gcard" style="border-color:{{gmailBorder}}; background:{{gmailBg}}">
+      <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#3A2A1E" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
+      {{gmailStatus}}
+    </div>
+    <div class="btn {{gmailBtnClass}}" onClick="{{onGmailTap}}">{{gmailBtnLabel}}</div>
+    <sc-if value="{{gmailDone}}" hint-placeholder-val="{{false}}">
+      <div class="btn btn-yes" onClick="{{onNext}}">Continuar</div>
+    </sc-if>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{isWallets}}" hint-placeholder-val="{{false}}">
+  <div class="screen methods-screen">
+    <div class="methods-title">¿Cuáles son tus<br/>medios de pago?</div>
+    <div class="methods-sub">Marca todos los que usan. Así sabemos qué correos leer para capturar tus gastos solos.</div>
+
+    <div class="wallet-row">
+      <div class="group-title">Tarjetas</div>
+      <div class="chip-row">
+        <sc-for list="{{cardMethods}}" as="m" hint-placeholder-count="2">
+          <div class="chip" style="background:{{m.bg}}; color:{{m.color}}; border-color:{{m.border}}" onClick="{{m.toggle}}">{{m.label}}</div>
+        </sc-for>
+      </div>
+    </div>
+
+    <div class="wallet-row">
+      <div class="group-title">Billeteras digitales</div>
+      <div class="chip-row">
+        <sc-for list="{{walletMethods}}" as="m" hint-placeholder-count="3">
+          <div class="chip" style="background:{{m.bg}}; color:{{m.color}}; border-color:{{m.border}}" onClick="{{m.toggle}}">{{m.label}}</div>
+        </sc-for>
+      </div>
+    </div>
+
+    <div class="wallet-row">
+      <div class="group-title">Banco principal</div>
+      <div class="chip-row">
+        <sc-for list="{{bankMethods}}" as="m" hint-placeholder-count="5">
+          <div class="chip" style="background:{{m.bg}}; color:{{m.color}}; border-color:{{m.border}}" onClick="{{m.toggle}}">{{m.label}}</div>
+        </sc-for>
+      </div>
+    </div>
+
+    <div class="btn {{walletsBtnClass}}" onClick="{{onWalletsNext}}">Guardar y continuar</div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{isInvite}}" hint-placeholder-val="{{false}}">
+  <div class="screen">
+    <div class="title">Invita a tu pareja</div>
+    <div class="sub">Le llega el link, lo abre, y quedan conectados.</div>
+    <div class="code-box">
+      <div class="code-label">Tu código</div>
+      <div class="code">AMBOS-7F2K</div>
+    </div>
+    <div class="btn btn-yes" onClick="{{onInviteSend}}">
+      Compartir por WhatsApp
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+    </div>
+    <div class="demo-link" onClick="{{onNext}}">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>
+      simular: ya se unió
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{isConnected}}" hint-placeholder-val="{{false}}">
+  <div class="screen">
+    <div class="pair-row">
+      <div class="avatar"><img src="boy-bust.jpg"></div>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="#E2653C" stroke="none"><path d="M12 21s-7-4.35-9.5-8.8C.5 8.3 2.4 5 6 5c2 0 3.3 1.1 4 2.1C10.7 6.1 12 5 14 5c3.6 0 5.5 3.3 3.5 7.2C19 16.65 12 21 12 21z"/></svg>
+      <div class="avatar"><img src="girl-bust.jpg"></div>
+    </div>
+    <div class="title">¡Conectados!</div>
+    <div class="sub">Ya pueden ver sus gastos juntos, con total transparencia.</div>
+    <div class="btn btn-ok" onClick="{{onNext}}">Empezar</div>
+    <div class="demo-link" onClick="{{onReset}}">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>
+      reiniciar demo
+    </div>
+  </div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script data-dc-script data-props='{}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = {
+      step: 'welcome',
+      gmailConnected: false,
+      methods: []
+    };
+  }
+
+  toggleMethod(id) {
+    const has = this.state.methods.includes(id);
+    this.setState({
+      methods: has ? this.state.methods.filter((m) => m !== id) : [...this.state.methods, id]
+    });
+  }
+
+  renderVals() {
+    const s = this.state;
+    const steps = ['welcome', 'gmail', 'wallets', 'invite', 'connected'];
+    const idx = steps.indexOf(s.step);
+    const dotColor = (i) => (i <= idx ? '#E2653C' : '#E9E2CF');
+    const walletsReady = s.methods.length > 0;
+
+    const mk = (id, label) => {
+      const on = s.methods.includes(id);
+      return {
+        label,
+        bg: on ? '#E2653C' : '#FFFFFF',
+        color: on ? '#FFFBF2' : '#3A2A1E',
+        border: on ? '#E2653C' : '#E9E2CF',
+        toggle: () => this.toggleMethod(id)
+      };
+    };
+    const cardMethods = [mk('debito', 'Débito'), mk('credito', 'Crédito')];
+    const walletMethods = [mk('yape', 'Yape'), mk('plin', 'Plin'), mk('agora', 'Agora')];
+    const bankMethods = [mk('bcp', 'BCP'), mk('bbva', 'BBVA'), mk('interbank', 'Interbank'), mk('scotiabank', 'Scotiabank'), mk('banbif', 'BanBif')];
+
+    return {
+      dot1: dotColor(0), dot2: dotColor(1), dot3: dotColor(2), dot4: dotColor(3), dot5: dotColor(4),
+      isWelcome: s.step === 'welcome',
+      isGmail: s.step === 'gmail',
+      isWallets: s.step === 'wallets',
+      isInvite: s.step === 'invite',
+      isConnected: s.step === 'connected',
+
+      gmailDone: s.gmailConnected,
+      gmailStatus: s.gmailConnected ? 'marcoap99@gmail.com conectado' : 'Aún no conectado',
+      gmailBorder: s.gmailConnected ? '#3D8C77' : '#F0EADA',
+      gmailBg: s.gmailConnected ? '#F1F8F4' : '#FFFFFF',
+      gmailBtnClass: s.gmailConnected ? 'btn-disabled' : 'btn-yes',
+      gmailBtnLabel: s.gmailConnected ? 'Conectado' : 'Conectar con Google',
+      onGmailTap: () => (s.gmailConnected ? null : this.setState({ gmailConnected: true })),
+
+      cardMethods,
+      walletMethods,
+      bankMethods,
+      walletsBtnClass: walletsReady ? 'btn-yes' : 'btn-disabled',
+      onWalletsNext: () => (walletsReady ? this.setState({ step: 'invite' }) : null),
+
+      onInviteSend: () => {},
+
+      onNext: () => {
+        const next = { welcome: 'gmail', gmail: 'wallets', wallets: 'invite', invite: 'connected', connected: 'connected' };
+        this.setState({ step: next[s.step] });
+      },
+      onReset: () => this.setState({ step: 'welcome', gmailConnected: false, methods: [] })
+    };
+  }
+}
+</script>
+</body>
+</html>

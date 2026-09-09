@@ -1,0 +1,1178 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Architects+Daughter&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+  * { box-sizing:border-box; }
+  body { margin:0; }
+  a { color:#E2653C; } a:hover { color:#C24E2A; }
+  .root { width:390px; height:844px; background:#FFFBF2; font-family:'IBM Plex Sans', ui-sans-serif, sans-serif; color:#3A2A1E; position:relative; overflow:hidden; display:flex; flex-direction:column; }
+  .header { display:flex; align-items:center; justify-content:space-between; padding:20px 22px 4px; flex:none; }
+  .wordmark { font-family:'Architects Daughter', cursive; font-size:22px; color:#E2653C; transform:rotate(-2deg); }
+  .header-right { display:flex; align-items:center; gap:9px; }
+  .badge { display:flex; align-items:center; gap:5px; background:#F0B429; color:#3A2A1E; font-size:12px; font-weight:700; padding:4px 10px; border-radius:999px; }
+  .avatar-mini { width:34px; height:34px; border-radius:50%; overflow:hidden; flex:none; box-shadow:0 1px 2px rgba(58,42,30,.15); }
+  .avatar-mini img { width:100%; height:100%; object-fit:cover; display:block; }
+
+  .body { flex:1; display:flex; flex-direction:column; overflow:hidden; }
+  .screen { flex:1; display:flex; flex-direction:column; overflow:hidden; }
+
+  /* checkin */
+  .checkin { align-items:center; justify-content:center; gap:16px; padding:0 26px; }
+  .yb { width:100%; background:#FBF2E2; border:2px solid #F0DDB3; border-radius:16px; padding:14px 16px; display:flex; flex-direction:column; gap:10px; box-shadow:0 1px 2px rgba(58,42,30,.05), 0 2px 8px rgba(58,42,30,.04); }
+  .yb-text { font-size:13px; font-weight:600; }
+  .yb-row { display:flex; gap:8px; }
+  .yb-btn { flex:1; text-align:center; padding:9px 0; border-radius:10px; font-size:12.5px; font-weight:700; cursor:pointer; }
+  .yb-btn-yes { background:#E2653C; color:#FFFBF2; }
+  .yb-btn-no { background:#FFFFFF; border:2px solid #E9E2CF; color:#6B5D48; }
+  .yb-done { font-size:12.5px; font-weight:600; color:#3D8C77; display:flex; align-items:center; gap:6px; }
+
+  .mascot-lg { width:126px; height:126px; object-fit:cover; border-radius:26px; }
+  .question { font-family:'Architects Daughter', cursive; font-size:23px; text-align:center; line-height:1.3; transform:rotate(-1deg); }
+  .buttons { display:flex; flex-direction:column; gap:14px; width:100%; }
+  .btn { display:flex; align-items:center; justify-content:center; gap:7px; border-radius:22px; padding:16px; font-size:16px; font-weight:700; box-shadow:0 4px 0 rgba(0,0,0,0.12); cursor:pointer; }
+  .btn-yes { background:#E2653C; color:#FFFBF2; }
+  .btn-no { background:#FFFFFF; border:2px solid #E9E2CF; color:#3A2A1E; box-shadow:none; cursor:pointer; }
+
+  /* declined */
+  .declined { align-items:center; justify-content:center; gap:16px; padding:0 30px; text-align:center; }
+  .mascot-md { width:96px; height:96px; object-fit:cover; border-radius:20px; }
+  .declined-title { font-family:'Architects Daughter', cursive; font-size:22px; }
+  .declined-sub { font-size:13px; color:#8A7A63; }
+  .demo-link { margin-top:18px; font-size:12px; color:#6B5D48; display:inline-flex; align-items:center; gap:5px; cursor:pointer; }
+
+  /* classify */
+  .classify { padding:14px 20px 18px; gap:12px; }
+  .prompt { display:flex; align-items:center; gap:10px; }
+  .mascot-sm { width:34px; height:34px; flex:none; object-fit:cover; border-radius:10px; }
+  .prompt-text { font-family:'Architects Daughter', cursive; font-size:16px; line-height:1.25; }
+  .list { flex:1; display:flex; flex-direction:column; gap:10px; overflow-y:auto; padding-right:2px; }
+  .card { background:#FFFFFF; border:2px solid #F0EADA; border-radius:18px; padding:13px 15px; display:flex; flex-direction:column; gap:9px; box-shadow:0 1px 2px rgba(58,42,30,.05), 0 2px 10px rgba(58,42,30,.05); }
+  .card-top { display:flex; justify-content:space-between; align-items:baseline; }
+  .merchant { font-weight:600; font-size:14.5px; }
+  .meta { font-size:11px; color:#8A7A63; margin-top:2px; }
+  .amount { font-variant-numeric:tabular-nums; font-weight:700; font-size:15px; }
+  .who-row { display:flex; gap:8px; }
+  .who-chip { flex:1; display:flex; align-items:center; justify-content:center; gap:6px; padding:8px 0; border-radius:12px; font-size:12px; font-weight:600; border:2px solid; cursor:pointer; }
+  .split-row { display:flex; justify-content:flex-end; }
+  .split-chip { display:inline-flex; align-items:center; gap:5px; font-size:11px; font-weight:600; color:#6B5D48; background:#FBF2E2; border:1px dashed #E7D6B3; border-radius:999px; padding:5px 12px; cursor:pointer; }
+  .slider-wrap { display:flex; flex-direction:column; gap:8px; padding:10px 4px 2px; }
+  .slider-readout { text-align:center; font-size:12px; font-weight:700; color:#3A2A1E; }
+  .slider-track { position:relative; height:8px; border-radius:999px; background:#F0EADA; margin:0 9px; }
+  .slider-fill { position:absolute; top:0; left:0; height:100%; border-radius:999px; background:#E2653C; }
+  .slider-handle { position:absolute; top:-5px; width:18px; height:18px; border-radius:50%; background:#FFFFFF; border:3px solid #E2653C; transform:translateX(-50%); box-shadow:0 1px 3px rgba(0,0,0,.18); }
+  .slider-ticks { position:absolute; top:-8px; left:0; right:0; bottom:-8px; display:flex; }
+  .slider-tick { flex:1; cursor:pointer; }
+  .slider-labels { display:flex; justify-content:space-between; font-size:9.5px; color:#B8AA92; padding:0 2px; }
+  .slider-done { align-self:center; font-size:11px; font-weight:700; color:#3D8C77; padding:5px 14px; border-radius:999px; background:#EAF3EF; cursor:pointer; margin-top:2px; }
+  .cat-row { display:flex; gap:6px; overflow-x:auto; padding-bottom:1px; }
+  .cat-chip { flex:none; padding:6px 11px; border-radius:999px; font-size:11px; font-weight:600; border:2px solid; cursor:pointer; }
+  .progress { text-align:center; font-size:12px; color:#8A7A63; padding-top:2px; flex:none; }
+  .continue-btn { flex:none; margin-top:2px; }
+
+  /* saldo */
+  .saldo { align-items:center; justify-content:center; gap:20px; padding:0 28px; }
+  .saldo-card { width:100%; background:#FFFFFF; border:2px solid #F0EADA; border-radius:22px; padding:26px 22px; text-align:center; display:flex; flex-direction:column; gap:6px; box-shadow:0 1px 2px rgba(58,42,30,.05), 0 3px 14px rgba(58,42,30,.06); }
+  .saldo-label { font-size:12px; letter-spacing:.04em; text-transform:uppercase; color:#8A7A63; }
+  .saldo-shared { font-size:13px; color:#8A7A63; }
+  .saldo-owe { font-family:'Architects Daughter', cursive; font-size:24px; margin:6px 0 2px; }
+  .check-wrap { width:84px; height:84px; border-radius:50%; background:#E9F6EE; display:flex; align-items:center; justify-content:center; animation:popIn .5s cubic-bezier(.34,1.56,.64,1); }
+  .hug-wrap { position:relative; width:148px; height:148px; animation:popIn .5s cubic-bezier(.34,1.56,.64,1); }
+  .hug-img { width:148px; height:148px; object-fit:cover; border-radius:24px; box-shadow:0 1px 2px rgba(58,42,30,.08), 0 6px 20px rgba(58,42,30,.1); }
+  @keyframes popIn { 0%{transform:scale(0);} 70%{transform:scale(1.12);} 100%{transform:scale(1);} }
+  .settled-title { font-family:'Architects Daughter', cursive; font-size:22px; }
+  .settled-sub { font-size:13px; color:#8A7A63; }
+
+  /* comprobante */
+  .proof-title { font-family:'Architects Daughter', cursive; font-size:19px; text-align:center; }
+  .proof-box { position:relative; width:100%; border:2px dashed #E9E2CF; border-radius:18px; padding:26px 16px; display:flex; flex-direction:column; align-items:center; gap:8px; cursor:pointer; }
+  .proof-text { font-size:13px; font-weight:600; color:#6B5D48; }
+  .proof-check { position:absolute; top:-10px; right:-10px; width:26px; height:26px; border-radius:50%; background:#3D8C77; display:flex; align-items:center; justify-content:center; }
+
+  /* historial */
+  .historial { padding:16px 20px 14px; gap:12px; }
+  .section-title { font-family:'Architects Daughter', cursive; font-size:20px; }
+  .section-sub { font-size:12.5px; color:#8A7A63; margin-top:-6px; }
+  .filter-row { display:flex; gap:8px; }
+  .filter-chip { padding:8px 14px; border-radius:999px; font-size:12.5px; font-weight:700; border:2px solid; cursor:pointer; }
+  .h-list { flex:1; display:flex; flex-direction:column; gap:10px; overflow-y:auto; }
+  .h-card { background:#FFFFFF; border:2px solid #F0EADA; border-radius:16px; padding:12px 14px; display:flex; flex-direction:column; gap:6px; box-shadow:0 1px 2px rgba(58,42,30,.05), 0 2px 8px rgba(58,42,30,.04); }
+  .h-top { display:flex; justify-content:space-between; align-items:center; }
+  .h-person { display:flex; align-items:center; gap:6px; font-size:12px; font-weight:700; }
+  .h-dot { width:7px; height:7px; border-radius:50%; }
+  .h-new { font-size:9.5px; font-weight:700; color:#E2653C; background:#FDEBE3; padding:2px 6px; border-radius:999px; margin-left:2px; }
+  .h-amount { font-variant-numeric:tabular-nums; font-weight:700; font-size:14px; }
+  .h-merchant { font-size:14px; font-weight:600; }
+  .h-date { font-size:11px; color:#8A7A63; }
+  .h-tags { display:flex; gap:6px; margin-top:2px; }
+  .h-pill { font-size:10.5px; font-weight:600; color:#8A7A63; background:#F5F0E4; padding:3px 9px; border-radius:999px; }
+  .h-delete { margin-left:auto; width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; }
+  .h-edit { width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; }
+  .h-edit-panel { display:flex; flex-direction:column; gap:8px; margin-top:8px; padding-top:10px; border-top:1px dashed #F0EADA; }
+  .warn-box { background:#FBF2E2; border:2px solid #F0DDB3; border-radius:14px; padding:12px 14px; display:flex; flex-direction:column; gap:10px; }
+  .warn-text { font-size:12px; font-weight:600; line-height:1.45; }
+  .warn-actions { display:flex; gap:8px; }
+  .empty-state { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; padding:40px 30px; text-align:center; }
+  .empty-title { font-family:'Architects Daughter', cursive; font-size:17px; }
+  .empty-sub { font-size:12.5px; color:#8A7A63; max-width:220px; }
+
+  /* ciclos */
+  .ciclos { padding:16px 20px 14px; gap:12px; }
+  .c-list { flex:1; display:flex; flex-direction:column; gap:10px; overflow-y:auto; }
+  .c-card { background:#FFFFFF; border:2px solid #F0EADA; border-radius:16px; padding:14px 16px; display:flex; flex-direction:column; gap:6px; box-shadow:0 1px 2px rgba(58,42,30,.05), 0 2px 8px rgba(58,42,30,.04); }
+  .c-top { display:flex; justify-content:space-between; align-items:center; }
+  .c-status { font-size:11px; font-weight:700; padding:3px 10px; border-radius:999px; }
+  .c-range { font-size:13.5px; font-weight:600; }
+  .c-total { font-size:12.5px; color:#8A7A63; }
+  .c-proof { display:flex; align-items:center; gap:5px; font-size:11px; color:#3D8C77; font-weight:600; margin-top:2px; }
+  .c-track { width:100%; height:8px; border-radius:999px; background:#F0EADA; margin-top:4px; overflow:hidden; }
+  .c-fill { height:100%; border-radius:999px; }
+  .c-record { font-size:10.5px; color:#8A7A63; margin-top:2px; }
+  .c-cats { display:flex; flex-direction:column; gap:5px; margin-top:6px; padding-top:8px; border-top:1px dashed #F0EADA; }
+  .c-cat-row { display:flex; align-items:center; gap:7px; }
+  .c-cat-label { width:60px; flex:none; font-size:10px; font-weight:600; color:#6B5D48; }
+  .c-cat-track { flex:1; height:6px; border-radius:999px; background:#F0EADA; overflow:hidden; }
+  .c-cat-fill { height:100%; border-radius:999px; }
+  .c-cat-amt { width:36px; flex:none; text-align:right; font-size:10px; font-weight:700; color:#8A7A63; font-variant-numeric:tabular-nums; }
+
+  .dash-card { background:#FFFFFF; border:2px solid #F0EADA; border-radius:18px; padding:16px; display:flex; flex-direction:column; gap:14px; box-shadow:0 1px 2px rgba(58,42,30,.05), 0 3px 12px rgba(58,42,30,.05); }
+  .dash-title { font-size:11px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:#8A7A63; }
+  .dash-tiles { display:flex; gap:8px; }
+  .dash-tile { flex:1; background:#FBF8F0; border-radius:12px; padding:10px 8px; display:flex; flex-direction:column; gap:2px; }
+  .dash-tile .v { font-size:15px; font-weight:700; font-variant-numeric:tabular-nums; }
+  .dash-tile .l { font-size:9px; color:#8A7A63; font-weight:600; text-transform:uppercase; letter-spacing:.01em; }
+  .cat-bar-row { display:flex; align-items:center; gap:8px; }
+  .cat-bar-label { width:66px; flex:none; font-size:11px; font-weight:600; color:#3A2A1E; }
+  .cat-bar-track { flex:1; height:9px; border-radius:999px; background:#F0EADA; overflow:hidden; }
+  .cat-bar-fill { height:100%; border-radius:999px; }
+  .cat-bar-amt { width:46px; flex:none; text-align:right; font-size:11px; font-weight:700; font-variant-numeric:tabular-nums; color:#8A7A63; }
+  .pair-track { display:flex; height:10px; border-radius:999px; overflow:hidden; background:#F0EADA; }
+  .pair-seg { height:100%; }
+  .pair-legend { display:flex; justify-content:space-between; font-size:10.5px; color:#8A7A63; margin-top:6px; }
+
+  /* ajustes */
+  .ajustes { padding:18px 22px 14px; gap:14px; align-items:stretch; }
+  .a-card { background:#FFFFFF; border:2px solid #F0EADA; border-radius:18px; padding:16px 18px; display:flex; flex-direction:column; gap:12px; box-shadow:0 1px 2px rgba(58,42,30,.05), 0 2px 10px rgba(58,42,30,.05); }
+  .a-row { display:flex; align-items:center; justify-content:space-between; }
+  .a-label { font-size:11px; font-weight:700; letter-spacing:.03em; text-transform:uppercase; color:#8A7A63; }
+  .a-value { font-size:14.5px; font-weight:600; }
+  .a-pair { display:flex; align-items:center; gap:8px; font-size:13.5px; font-weight:600; color:#3D8C77; }
+  .a-toggle { width:40px; height:22px; border-radius:999px; background:#E9E2CF; position:relative; cursor:pointer; }
+  .a-toggle-knob { position:absolute; top:2px; width:18px; height:18px; border-radius:50%; background:#FFFFFF; transition:left .15s; }
+  .btn-logout { background:#FFFFFF; border:2px solid #F0C9BA; color:#C24E2A; box-shadow:none; }
+
+  /* navbar */
+  .navbar { flex:none; display:flex; justify-content:space-around; align-items:center; padding:9px 0 16px; border-top:2px dashed #E9E2CF; background:#FFFBF2; }
+  .navitem { display:flex; flex-direction:column; align-items:center; gap:3px; font-size:9.5px; font-weight:700; cursor:pointer; }
+
+  /* racha semanal */
+  .week-row { display:flex; justify-content:space-between; width:100%; padding:0 2px; }
+  .week-day { display:flex; flex-direction:column; align-items:center; gap:4px; font-size:9.5px; color:#8A7A63; font-weight:600; }
+  .week-dot { width:23px; height:23px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:2px solid #E9E2CF; }
+  .week-dot.done { background:#F0B429; border-color:#F0B429; }
+  .week-dot.today { border-color:#E2653C; border-style:dashed; }
+
+  /* tooltip guiado */
+  .tip-backdrop { position:absolute; inset:0; background:rgba(58,42,30,.5); backdrop-filter:blur(3px); -webkit-backdrop-filter:blur(3px); z-index:7; }
+  .tip-card { position:absolute; left:20px; right:20px; bottom:96px; background:#3A2A1E; color:#FFFBF2; border-radius:16px; padding:14px 16px; display:flex; flex-direction:column; gap:10px; z-index:8; box-shadow:0 10px 24px rgba(0,0,0,.3); }
+  .tip-text { font-size:12.5px; line-height:1.55; }
+  .tip-text b { color:#F0B429; }
+  .tip-btn { align-self:flex-end; background:#E2653C; color:#FFFBF2; font-size:12.5px; font-weight:700; padding:8px 16px; border-radius:14px; cursor:pointer; }
+
+  /* boton flotante + overlay de efectivo */
+  .fab { position:absolute; right:18px; bottom:92px; width:52px; height:52px; border-radius:50%; background:#E2653C; display:flex; align-items:center; justify-content:center; box-shadow:0 6px 16px rgba(226,101,60,.4); cursor:pointer; z-index:5; }
+  .overlay { position:absolute; inset:0; background:#FFFBF2; display:flex; flex-direction:column; z-index:10; }
+  .overlay-header { flex:none; display:flex; align-items:center; justify-content:space-between; padding:20px 20px 4px; }
+  .overlay-title { font-family:'Architects Daughter', cursive; font-size:19px; }
+  .overlay-close { width:32px; height:32px; border-radius:50%; background:#F5F0E4; display:flex; align-items:center; justify-content:center; cursor:pointer; flex:none; }
+  .overlay-body { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; padding:0 28px; text-align:center; }
+  .mic-btn { width:40px; height:40px; border-radius:50%; background:#FBF2E2; display:flex; align-items:center; justify-content:center; flex:none; cursor:pointer; }
+
+  /* chat de registro manual */
+  .chat-body { flex:1; display:flex; flex-direction:column; gap:12px; padding:16px 20px; overflow-y:auto; }
+  .msg-row { display:flex; gap:8px; align-items:flex-end; }
+  .msg-row.user { justify-content:flex-end; }
+  .msg-avatar { width:26px; height:26px; flex:none; object-fit:cover; border-radius:8px; }
+  .msg-bubble { max-width:82%; padding:10px 13px; border-radius:16px; font-size:13px; line-height:1.45; }
+  .msg-bubble.bot { background:#FFFFFF; border:2px solid #F0EADA; border-bottom-left-radius:4px; }
+  .msg-bubble.user { background:#E2653C; color:#FFFBF2; border-bottom-right-radius:4px; }
+  .confirm-card { background:#FBF8F0; border:2px solid #F0EADA; border-radius:14px; padding:12px; display:flex; flex-direction:column; gap:9px; margin-top:8px; box-shadow:0 1px 2px rgba(58,42,30,.05), 0 2px 8px rgba(58,42,30,.04); }
+  .confirm-row { display:flex; justify-content:space-between; align-items:center; }
+  .confirm-amount { font-size:19px; font-weight:700; font-variant-numeric:tabular-nums; }
+  .method-row { display:flex; gap:6px; flex-wrap:wrap; }
+  .method-chip { padding:6px 11px; border-radius:999px; font-size:10.5px; font-weight:600; border:2px solid; cursor:pointer; }
+  .confirm-actions { display:flex; gap:8px; margin-top:2px; }
+  .confirm-actions .btn { flex:1; padding:11px; font-size:13px; box-shadow:none; }
+  .chat-input-bar { flex:none; display:flex; align-items:center; gap:8px; padding:10px 16px 18px; border-top:2px dashed #E9E2CF; }
+  .chat-input-pill { flex:1; background:#F5F0E4; border-radius:999px; padding:11px 16px; font-size:13px; color:#B8AA92; }
+
+  /* balance historial */
+  .bal-wrap { width:100%; }
+  .bal-track { position:relative; height:10px; border-radius:999px; background:#F0EADA; margin-top:6px; }
+  .bal-fill { position:absolute; top:0; height:100%; border-radius:999px; }
+  .bal-center { position:absolute; left:50%; top:-3px; width:2px; height:16px; background:#D8CBB0; transform:translateX(-50%); }
+  .bal-marker { position:absolute; top:-4px; width:18px; height:18px; border-radius:50%; border:3px solid #FFFBF2; transform:translateX(-50%); box-shadow:0 1px 3px rgba(0,0,0,.18); }
+  .bal-labels { display:flex; justify-content:space-between; font-size:10.5px; color:#8A7A63; margin-top:8px; }
+  .bal-status { text-align:center; font-size:13px; font-weight:700; margin-top:6px; }
+  .bal-chip { align-self:center; font-size:12px; font-weight:700; padding:7px 14px; border-radius:999px; cursor:pointer; }
+
+  /* ajustes: ayuda / faq */
+  .a-link { display:flex; align-items:center; justify-content:space-between; cursor:pointer; }
+  .back-row { display:flex; align-items:center; gap:8px; cursor:pointer; }
+  .faq-card { background:#FFFFFF; border:2px solid #F0EADA; border-radius:16px; padding:14px 16px; display:flex; flex-direction:column; gap:8px; cursor:pointer; box-shadow:0 1px 2px rgba(58,42,30,.05), 0 2px 8px rgba(58,42,30,.04); }
+  .faq-q { display:flex; justify-content:space-between; align-items:center; font-weight:600; font-size:13.5px; }
+  .faq-a { font-size:12.5px; color:#8A7A63; line-height:1.5; }
+</style>
+</helmet>
+<div class="root">
+  <div class="header">
+    <div class="wordmark">Ambos</div>
+    <div class="header-right">
+      <div class="badge">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="#3A2A1E"><ellipse cx="12" cy="16.5" rx="5.6" ry="4.6"/><circle cx="5.2" cy="9.5" r="2.3"/><circle cx="10.2" cy="6" r="2.1"/><circle cx="13.8" cy="6" r="2.1"/><circle cx="18.8" cy="9.5" r="2.3"/></svg>
+        Racha 6
+      </div>
+      <div class="avatar-mini"><img src="boy-bust.jpg"></div>
+    </div>
+  </div>
+
+  <div class="body">
+
+  <sc-if value="{{navHoy}}" hint-placeholder-val="{{true}}">
+
+    <sc-if value="{{isCheckin}}" hint-placeholder-val="{{true}}">
+    <div class="screen checkin">
+      <div class="week-row">
+        <sc-for list="{{week}}" as="d" hint-placeholder-count="7">
+          <div class="week-day">
+            <div class="week-dot {{d.cls}}">
+              <sc-if value="{{d.done}}" hint-placeholder-val="{{true}}">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="#FFFBF2"><path d="M12 2 C8 8 6 11 6 15 a6 6 0 0 0 12 0 c0 -3 -1 -5 -3 -7 c0 2 -1 3 -2 3 c-1 -3 0 -6 -1 -9Z"/></svg>
+              </sc-if>
+            </div>
+            {{d.label}}
+          </div>
+        </sc-for>
+      </div>
+      <div class="bal-chip" style="background:{{balChipBg}}; color:{{balColor}}" onClick="{{onNavHistorial}}">{{owedTitle}} {{pendingLabel}}</div>
+      <sc-if value="{{showYesterday}}" hint-placeholder-val="{{true}}">
+        <div class="yb">
+          <div class="yb-text">Ayer se pasó el check-in. ¿Agregamos algo de ese día?</div>
+          <div class="yb-row">
+            <div class="yb-btn yb-btn-no" onClick="{{onYesterdayNo}}">No, olvidarlo</div>
+            <div class="yb-btn yb-btn-yes" onClick="{{onYesterdayYes}}">Sí, agregar</div>
+          </div>
+        </div>
+      </sc-if>
+      <sc-if value="{{showYesterdayDone}}" hint-placeholder-val="{{false}}">
+        <div class="yb-done">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3D8C77" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>
+          Gastos de ayer sumados al historial
+        </div>
+      </sc-if>
+      <img class="mascot-lg" src="dog-neutral.jpg">
+      <div class="question">¡Cuéntame! ¿hubo<br/>gastos con tu pareja hoy?</div>
+      <div class="buttons">
+        <div class="btn btn-yes" onClick="{{onYes}}">¡Sí, va!</div>
+        <div class="btn btn-no" onClick="{{onNo}}">Hoy no</div>
+      </div>
+    </div>
+    </sc-if>
+
+    <sc-if value="{{isDeclined}}" hint-placeholder-val="{{false}}">
+    <div class="screen declined">
+      <img class="mascot-md" src="dog-worried.jpg">
+      <div class="declined-title">Tranqui, nos vemos mañana</div>
+      <div class="declined-sub">No hace falta nada más por hoy.</div>
+      <div class="demo-link" onClick="{{onReset}}">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>
+        reiniciar demo
+      </div>
+    </div>
+    </sc-if>
+
+    <sc-if value="{{isClassify}}" hint-placeholder-val="{{false}}">
+    <div class="screen classify">
+      <div class="prompt">
+        <img class="mascot-sm" src="coin.jpg">
+        <div class="prompt-text">Esto es tuyo, hoy.<br/>¿Fue personal o de los dos?</div>
+      </div>
+      <div class="list">
+        <sc-for list="{{items}}" as="item" hint-placeholder-count="2">
+          <div class="card">
+            <div class="card-top">
+              <div>
+                <div class="merchant">{{item.merchant}}</div>
+                <div class="meta">{{item.metaLine}}</div>
+              </div>
+              <div class="amount">{{item.amountLabel}}</div>
+            </div>
+            <div class="who-row">
+              <div class="who-chip" style="background:{{item.personalBg}}; color:{{item.personalColor}}; border-color:{{item.personalBorder}}" onClick="{{item.pickPersonal}}">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"/></svg>
+                Personal
+              </div>
+              <div class="who-chip" style="background:{{item.parejaBg}}; color:{{item.parejaColor}}; border-color:{{item.parejaBorder}}" onClick="{{item.pickPareja}}">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="9" cy="8" r="3"/><circle cx="16" cy="9" r="3"/><path d="M2 20v-1a5 5 0 0 1 5-5h1"/><path d="M12.5 20v-1a5 5 0 0 1 5-5h1a5 5 0 0 1 5 5v1"/></svg>
+                Pareja
+              </div>
+            </div>
+            <sc-if value="{{item.showSplit}}" hint-placeholder-val="{{false}}">
+            <div class="split-row">
+              <div class="split-chip" onClick="{{item.toggleSlider}}">
+                {{item.splitLabel}}
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+              </div>
+            </div>
+            <sc-if value="{{item.sliderOpen}}" hint-placeholder-val="{{false}}">
+            <div class="slider-wrap">
+              <div class="slider-readout">{{item.splitLabel}}</div>
+              <div class="slider-track">
+                <div class="slider-fill" style="width:{{item.pct}}"></div>
+                <div class="slider-handle" style="left:{{item.pct}}"></div>
+                <div class="slider-ticks">
+                  <sc-for list="{{item.ticks}}" as="tk" hint-placeholder-count="11">
+                    <div class="slider-tick" onClick="{{tk.pick}}"></div>
+                  </sc-for>
+                </div>
+              </div>
+              <div class="slider-labels"><span>0</span><span>50</span><span>100</span></div>
+              <div class="slider-done" onClick="{{item.toggleSlider}}">Listo</div>
+            </div>
+            </sc-if>
+            </sc-if>
+            <div class="cat-row">
+              <sc-for list="{{item.cats}}" as="cat" hint-placeholder-count="4">
+                <div class="cat-chip" style="background:{{cat.bg}}; color:{{cat.color}}; border-color:{{cat.border}}" onClick="{{cat.pick}}">{{cat.label}}</div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+      <div class="progress">{{classifiedCount}} de {{totalCount}} clasificados</div>
+      <sc-if value="{{allClassified}}" hint-placeholder-val="{{false}}">
+        <div class="btn btn-yes continue-btn" onClick="{{onContinue}}">
+          Ver saldo
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>
+        </div>
+      </sc-if>
+    </div>
+    </sc-if>
+
+    <sc-if value="{{isSaldo}}" hint-placeholder-val="{{false}}">
+    <div class="screen saldo">
+
+      <sc-if value="{{settled}}" hint-placeholder-val="{{false}}">
+        <div class="hug-wrap">
+          <img class="hug-img" src="hug.jpg">
+          <div class="proof-check">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFFBF2" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>
+          </div>
+        </div>
+        <div class="settled-title">¡Ajustado!</div>
+        <div class="settled-sub">{{settledNote}}</div>
+        <div class="demo-link" onClick="{{onReset}}">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>
+          volver a empezar
+        </div>
+      </sc-if>
+
+      <sc-if value="{{saldoResumen}}" hint-placeholder-val="{{true}}">
+        <div class="saldo-card">
+          <div class="saldo-label">Hoy compartieron</div>
+          <div class="saldo-shared">{{totalSharedLabel}}</div>
+          <div class="saldo-owe" style="color:{{owedColor}}">{{owedTitle}}<br/>{{pendingLabel}}</div>
+        </div>
+        <sc-if value="{{hasPending}}" hint-placeholder-val="{{true}}">
+          <div class="btn btn-yes" onClick="{{onLiquidar}}">Liquidar</div>
+        </sc-if>
+      </sc-if>
+
+      <sc-if value="{{saldoComprobante}}" hint-placeholder-val="{{false}}">
+        <div class="proof-title">¿Tienes captura<br/>de la transferencia?</div>
+        <div class="proof-box" style="border-color:{{proofBorderColor}}" onClick="{{onAttach}}">
+          <sc-if value="{{hasProof}}" hint-placeholder-val="{{false}}">
+            <div class="proof-check">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFFBF2" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>
+            </div>
+          </sc-if>
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#8A7A63" stroke-width="2"><path d="M12 16V4M12 4l-4 4M12 4l4 4"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg>
+          <div class="proof-text">{{proofLabel}}</div>
+        </div>
+        <div class="btn btn-yes" onClick="{{onConfirmSettle}}">Confirmar liquidación</div>
+      </sc-if>
+
+    </div>
+    </sc-if>
+
+  </sc-if>
+
+  <sc-if value="{{navHistorial}}" hint-placeholder-val="{{false}}">
+  <div class="screen historial">
+    <div class="section-title">Historial compartido</div>
+    <div class="section-sub">Todo lo que registran los dos, sin filtros.</div>
+    <div class="bal-wrap">
+      <div class="bal-track">
+        <div class="bal-fill" style="left:{{balFillLeft}}; width:{{balFillWidth}}; background:{{balColor}}"></div>
+        <div class="bal-center"></div>
+        <div class="bal-marker" style="left:{{balPct}}; background:{{balColor}}"></div>
+      </div>
+      <div class="bal-labels"><span>Le debes</span><span>A mano</span><span>Te debe</span></div>
+      <div class="bal-status" style="color:{{balColor}}">{{owedTitle}} {{pendingLabel}}</div>
+    </div>
+    <div class="filter-row">
+      <div class="filter-chip" style="background:{{fTodosBg}}; color:{{fTodosColor}}; border-color:{{fTodosBorder}}" onClick="{{onFilterTodos}}">Todos</div>
+      <div class="filter-chip" style="background:{{fTuBg}}; color:{{fTuColor}}; border-color:{{fTuBorder}}" onClick="{{onFilterTu}}">Tú</div>
+      <div class="filter-chip" style="background:{{fParejaBg}}; color:{{fParejaColor}}; border-color:{{fParejaBorder}}" onClick="{{onFilterPareja}}">Tu pareja</div>
+    </div>
+    <div class="h-list">
+      <sc-for list="{{historial}}" as="h" hint-placeholder-count="5">
+        <div class="h-card">
+          <div class="h-top">
+            <div class="h-person" style="color:{{h.personColor}}">
+              <div class="h-dot" style="background:{{h.personColor}}"></div>
+              {{h.person}}
+              <sc-if value="{{h.isNew}}" hint-placeholder-val="{{false}}">
+                <div class="h-new">nuevo</div>
+              </sc-if>
+            </div>
+            <div class="h-amount">{{h.amountLabel}}</div>
+          </div>
+          <div class="h-merchant">{{h.merchant}}</div>
+          <div class="h-date">{{h.date}}</div>
+          <div class="h-tags">
+            <div class="h-pill">{{h.source}}</div>
+            <div class="h-pill">{{h.tagLabel}}</div>
+            <div class="h-pill">{{h.category}}</div>
+            <div class="h-edit" onClick="{{h.edit}}">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#B8AA92" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+            </div>
+            <div class="h-delete" onClick="{{h.remove}}">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#B8AA92" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16"/><path d="M6 7l1 13a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-13"/><path d="M10 11v6M14 11v6"/></svg>
+            </div>
+          </div>
+          <sc-if value="{{h.editing}}" hint-placeholder-val="{{false}}">
+            <div class="h-edit-panel">
+              <sc-if value="{{h.confirming}}" hint-placeholder-val="{{false}}">
+                <div class="warn-box">
+                  <div class="warn-text">¿Seguro que quieres sacar este gasto de compartido? Ya no va a aparecer en el historial de los dos.</div>
+                  <div class="warn-actions">
+                    <div class="yb-btn yb-btn-no" onClick="{{h.cancelRemove}}">Cancelar</div>
+                    <div class="yb-btn yb-btn-yes" onClick="{{h.confirmRemove}}">Sí, sacarlo</div>
+                  </div>
+                </div>
+              </sc-if>
+              <sc-if value="{{h.notConfirming}}" hint-placeholder-val="{{true}}">
+                <div class="who-row">
+                  <sc-for list="{{h.whoChips}}" as="wc" hint-placeholder-count="2">
+                    <div class="who-chip" style="background:{{wc.bg}}; color:{{wc.color}}; border-color:{{wc.border}}" onClick="{{wc.pick}}">{{wc.label}}</div>
+                  </sc-for>
+                </div>
+                <div class="cat-row">
+                  <sc-for list="{{h.catChips}}" as="cc2" hint-placeholder-count="4">
+                    <div class="cat-chip" style="background:{{cc2.bg}}; color:{{cc2.color}}; border-color:{{cc2.border}}" onClick="{{cc2.pick}}">{{cc2.label}}</div>
+                  </sc-for>
+                </div>
+                <div class="slider-done" onClick="{{h.edit}}">Listo</div>
+              </sc-if>
+            </div>
+          </sc-if>
+        </div>
+      </sc-for>
+      <sc-if value="{{historialEmpty}}" hint-placeholder-val="{{false}}">
+        <div class="empty-state">
+          <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="#D8CBB0" stroke-width="1.6"><path d="M8 6h13M8 12h13M8 18h13"/><path d="M3 6h.01M3 12h.01M3 18h.01"/></svg>
+          <div class="empty-title">Nada por acá todavía</div>
+          <div class="empty-sub">En cuanto registren un gasto compartido, aparece en este historial.</div>
+        </div>
+      </sc-if>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{navCiclos}}" hint-placeholder-val="{{false}}">
+  <div class="screen ciclos">
+    <div class="section-title">Ciclos</div>
+    <div class="section-sub">Se acumula, se liquida, se archiva. Nada se borra.</div>
+
+    <div class="dash-card">
+      <div class="dash-title">Resumen de los dos</div>
+      <div class="filter-row">
+        <sc-for list="{{dashFilters}}" as="df" hint-placeholder-count="3">
+          <div class="filter-chip" style="background:{{df.bg}}; color:{{df.color}}; border-color:{{df.border}}" onClick="{{df.pick}}">{{df.label}}</div>
+        </sc-for>
+      </div>
+      <div class="dash-tiles">
+        <div class="dash-tile"><div class="v">{{dashTotalLabel}}</div><div class="l">Histórico</div></div>
+        <div class="dash-tile"><div class="v">{{dashAvgLabel}}</div><div class="l">Prom. / ciclo</div></div>
+        <div class="dash-tile"><div class="v">{{dashTopCat}}</div><div class="l">Top {{dashTopPct}}</div></div>
+      </div>
+      <div>
+        <sc-for list="{{dashCats}}" as="dc" hint-placeholder-count="4">
+          <div class="cat-bar-row">
+            <div class="cat-bar-label">{{dc.label}}</div>
+            <div class="cat-bar-track"><div class="cat-bar-fill" style="width:{{dc.pct}}; background:{{dc.color}}"></div></div>
+            <div class="cat-bar-amt">{{dc.amt}}</div>
+          </div>
+        </sc-for>
+      </div>
+      <div>
+        <div class="pair-track">
+          <div class="pair-seg" style="flex-grow:{{tuGrow}}; background:#E2653C"></div>
+          <div class="pair-seg" style="flex-grow:{{parejaGrow}}; background:#3D7A8C"></div>
+        </div>
+        <div class="pair-legend"><span>Tú: {{tuLabel}}</span><span>Tu pareja: {{parejaLabel}}</span></div>
+      </div>
+    </div>
+
+    <div class="c-list">
+      <sc-for list="{{ciclos}}" as="c" hint-placeholder-count="3">
+        <div class="c-card">
+          <div class="c-top">
+            <div class="c-range">{{c.range}}</div>
+            <div class="c-status" style="background:{{c.statusBg}}; color:{{c.statusColor}}">{{c.status}}</div>
+          </div>
+          <div class="c-total">{{c.total}}</div>
+          <div class="c-cats">
+            <sc-for list="{{c.cats}}" as="cc" hint-placeholder-count="4">
+              <div class="c-cat-row">
+                <div class="c-cat-label">{{cc.label}}</div>
+                <div class="c-cat-track"><div class="c-cat-fill" style="width:{{cc.pct}}; background:{{cc.color}}"></div></div>
+                <div class="c-cat-amt">{{cc.amt}}</div>
+              </div>
+            </sc-for>
+          </div>
+          <sc-if value="{{c.showProgress}}" hint-placeholder-val="{{false}}">
+            <div class="c-track"><div class="c-fill" style="width:{{c.pct}}; background:{{c.fillColor}}"></div></div>
+            <div class="c-record">{{c.dayLabel}}. Récord de la pareja: {{c.record}}</div>
+          </sc-if>
+          <sc-if value="{{c.hasProof}}" hint-placeholder-val="{{false}}">
+            <div class="c-proof">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#3D8C77" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a5 5 0 0 1-7.07-7.07l9.19-9.19a3.5 3.5 0 0 1 4.95 4.95l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+              Comprobante guardado
+            </div>
+          </sc-if>
+        </div>
+      </sc-for>
+      <sc-if value="{{ciclosEmpty}}" hint-placeholder-val="{{false}}">
+        <div class="empty-state">
+          <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="#D8CBB0" stroke-width="1.6"><rect x="3" y="4" width="18" height="4" rx="1"/><path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8"/><path d="M10 13h4"/></svg>
+          <div class="empty-title">Todavía sin ciclos</div>
+          <div class="empty-sub">En cuanto registren su primer gasto compartido, arranca acá el primer ciclo.</div>
+        </div>
+      </sc-if>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{navAjustes}}" hint-placeholder-val="{{false}}">
+  <div class="screen ajustes">
+
+    <sc-if value="{{ajustesMain}}" hint-placeholder-val="{{true}}">
+      <div class="section-title">Ajustes</div>
+      <div class="a-card">
+        <div class="a-row">
+          <div class="a-label">Apodo</div>
+          <div class="a-value">Marco</div>
+        </div>
+        <div class="a-row">
+          <div class="a-label">Emparejamiento</div>
+          <div class="a-pair">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="#3D8C77" stroke="none"><path d="M12 21s-7-4.35-9.5-8.8C.5 8.3 2.4 5 6 5c2 0 3.3 1.1 4 2.1C10.7 6.1 12 5 14 5c3.6 0 5.5 3.3 3.5 7.2C19 16.65 12 21 12 21z"/></svg>
+            Conectado con tu pareja
+          </div>
+        </div>
+        <div class="a-row">
+          <div class="a-label">Gmail</div>
+          <div class="a-value">marcoap99@gmail.com</div>
+        </div>
+      </div>
+      <div class="a-card">
+        <div class="a-row">
+          <div class="a-label">Modo oscuro</div>
+          <div class="a-toggle" style="background:{{darkBg}}" onClick="{{onToggleDark}}">
+            <div class="a-toggle-knob" style="left:{{darkKnob}}"></div>
+          </div>
+        </div>
+      </div>
+      <div class="a-card a-link" onClick="{{onOpenAyuda}}">
+        <div class="a-row" style="width:100%">
+          <div class="a-pair" style="color:#3A2A1E">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#8A7A63" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 0 1 5 0c0 1.5-2.5 2-2.5 4"/><path d="M12 17h.01"/></svg>
+            ¿Dudas? Preguntas frecuentes
+          </div>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8A7A63" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+        </div>
+      </div>
+      <div class="btn btn-logout" onClick="{{onReset}}">Cerrar sesión</div>
+    </sc-if>
+
+    <sc-if value="{{ajustesAyuda}}" hint-placeholder-val="{{false}}">
+      <div class="back-row" onClick="{{onCloseAyuda}}">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3A2A1E" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>
+        <div class="section-title" style="font-size:18px">Preguntas frecuentes</div>
+      </div>
+      <sc-for list="{{faqs}}" as="f" hint-placeholder-count="3">
+        <div class="faq-card" onClick="{{f.toggle}}">
+          <div class="faq-q">
+            {{f.q}}
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#8A7A63" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="transform:{{f.rotate}}"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+          <sc-if value="{{f.open}}" hint-placeholder-val="{{false}}">
+            <div class="faq-a">{{f.a}}</div>
+          </sc-if>
+        </div>
+      </sc-for>
+    </sc-if>
+
+  </div>
+  </sc-if>
+
+  </div>
+
+  <div class="navbar">
+    <div class="navitem" onClick="{{onNavHoy}}" style="color:{{navHoyColor}}">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>
+      Hoy
+    </div>
+    <div class="navitem" onClick="{{onNavHistorial}}" style="color:{{navHistorialColor}}">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13M8 12h13M8 18h13"/><path d="M3 6h.01M3 12h.01M3 18h.01"/></svg>
+      Historial
+    </div>
+    <div class="navitem" onClick="{{onNavCiclos}}" style="color:{{navCiclosColor}}">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="4" rx="1"/><path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8"/><path d="M10 13h4"/></svg>
+      Ciclos
+    </div>
+    <div class="navitem" onClick="{{onNavAjustes}}" style="color:{{navAjustesColor}}">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1 1.55V21a2 2 0 0 1-4 0v-.09a1.7 1.7 0 0 0-1-1.55 1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.7 1.7 0 0 0 .34-1.87 1.7 1.7 0 0 0-1.55-1H3a2 2 0 0 1 0-4h.09a1.7 1.7 0 0 0 1.55-1 1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.7 1.7 0 0 0 1.87.34H9a1.7 1.7 0 0 0 1-1.55V3a2 2 0 0 1 4 0v.09a1.7 1.7 0 0 0 1 1.55 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.7 1.7 0 0 0-.34 1.87V9a1.7 1.7 0 0 0 1.55 1H21a2 2 0 0 1 0 4h-.09a1.7 1.7 0 0 0-1.55 1z"/></svg>
+      Ajustes
+    </div>
+  </div>
+
+  <sc-if value="{{showTip}}" hint-placeholder-val="{{true}}">
+    <div class="tip-backdrop"></div>
+    <div class="tip-card">
+      <div class="tip-text">{{tipText}}</div>
+      <div class="tip-btn" onClick="{{onDismissTip}}">Entendido</div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{showFab}}" hint-placeholder-val="{{true}}">
+    <div class="fab" onClick="{{onManualOpen}}">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFBF2" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{manualOpen}}" hint-placeholder-val="{{false}}">
+    <div class="overlay">
+      <div class="overlay-header">
+        <div class="overlay-title">Registrar gasto</div>
+        <div class="overlay-close" onClick="{{onManualClose}}">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3A2A1E" stroke-width="2.4" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </div>
+      </div>
+      <sc-if value="{{manualForm}}" hint-placeholder-val="{{true}}">
+        <div class="chat-body">
+          <div class="msg-row">
+            <img class="msg-avatar" src="coin.jpg">
+            <div class="msg-bubble bot">¿Qué gasto quieres registrar? Sirve también para lo que no llegó por correo.</div>
+          </div>
+          <div class="msg-row user">
+            <div class="msg-bubble user">Almuerzo con mi pareja, 12 soles, en efectivo</div>
+          </div>
+          <div class="msg-row">
+            <img class="msg-avatar" src="coin.jpg">
+            <div class="msg-bubble bot" style="flex:1">
+              Esto voy a registrar:
+              <div class="confirm-card">
+                <div class="confirm-row"><div class="confirm-amount">S/ 12</div><div class="h-pill">Comida</div></div>
+                <div class="method-row">
+                  <sc-for list="{{manualMethods}}" as="m" hint-placeholder-count="5">
+                    <div class="method-chip" style="background:{{m.bg}}; color:{{m.color}}; border-color:{{m.border}}" onClick="{{m.pick}}">{{m.label}}</div>
+                  </sc-for>
+                </div>
+                <div class="confirm-actions">
+                  <div class="btn btn-no" onClick="{{onManualClose}}">Editar</div>
+                  <div class="btn btn-yes" onClick="{{onManualSave}}">Confirmar</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="chat-input-bar">
+          <div class="chat-input-pill">Escribe o dicta tu gasto</div>
+          <div class="mic-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E2653C" stroke-width="2"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/></svg>
+          </div>
+        </div>
+      </sc-if>
+      <sc-if value="{{manualDone}}" hint-placeholder-val="{{false}}">
+        <div class="overlay-body">
+          <div class="check-wrap">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#2F8F5B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>
+          </div>
+          <div class="settled-title">¡Registrado!</div>
+          <div class="settled-sub">Ya quedó en tu historial.</div>
+          <div class="demo-link" onClick="{{onManualClose}}">cerrar</div>
+        </div>
+      </sc-if>
+    </div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script data-dc-script data-props='{}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = {
+      nav: 'hoy',
+      screen: 'checkin',
+      saldoSub: 'resumen',
+      hasProof: false,
+      settled: false,
+      yesterday: 'pending',
+      historialFilter: 'todos',
+      dark: false,
+      tipsSeen: { hoy: false, historial: false, ciclos: false, ajustes: false },
+      manualView: 'closed',
+      ajustesView: 'main',
+      openFaq: null,
+      dashFilter: 'anio',
+      items: [
+        { id: 1, merchant: 'La Baguette', time: '21:10', amount: 68, payer: 'tu', source: 'BCP', who: null, splitRatio: 0.5, category: null },
+        { id: 3, merchant: 'InDrive', time: '23:05', amount: 14, payer: 'tu', source: 'BCP', who: null, splitRatio: 0.5, category: null }
+      ],
+      removedHistorial: [],
+      openSlider: null,
+      editingHistorial: null,
+      confirmPersonal: null,
+      historialOverrides: {},
+      manualMethod: 'efectivo'
+    };
+  }
+
+  fmt(n) {
+    return n % 1 === 0 ? String(n) : n.toFixed(2);
+  }
+
+  setWho(id, who) {
+    this.setState({ items: this.state.items.map((it) => (it.id === id ? { ...it, who } : it)) });
+  }
+
+  setSplitRatio(id, ratio) {
+    this.setState({
+      items: this.state.items.map((it) => (it.id === id ? { ...it, splitRatio: ratio } : it))
+    });
+  }
+
+  toggleSlider(id) {
+    this.setState({ openSlider: this.state.openSlider === id ? null : id });
+  }
+
+  removeHistorial(id) {
+    this.setState({ removedHistorial: [...this.state.removedHistorial, id] });
+  }
+
+  toggleEditHistorial(id) {
+    this.setState({
+      editingHistorial: this.state.editingHistorial === id ? null : id,
+      confirmPersonal: null
+    });
+  }
+
+  setHistorialOverride(id, patch) {
+    const cur = this.state.historialOverrides[id] || {};
+    this.setState({ historialOverrides: { ...this.state.historialOverrides, [id]: { ...cur, ...patch } } });
+  }
+
+  setManualMethod(id) {
+    this.setState({ manualMethod: id });
+  }
+
+  setCategory(id, cat) {
+    this.setState({ items: this.state.items.map((it) => (it.id === id ? { ...it, category: cat } : it)) });
+  }
+
+  toggleFaq(id) {
+    this.setState({ openFaq: this.state.openFaq === id ? null : id });
+  }
+
+  renderVals() {
+    const s = this.state;
+    const CATS = ['Comida', 'Salidas', 'Transporte', 'Compras'];
+    const CAT_COLORS = { Comida: '#2a78d6', Salidas: '#eb6834', Transporte: '#1baf7a', Compras: '#eda100' };
+    const CAT_TINTS = { Comida: '#E4EFFB', Salidas: '#FCEAE2', Transporte: '#E1F5EC', Compras: '#FCF1DC' };
+    const CAT_ORDER = CATS;
+    const METHODS = ['efectivo', 'yape', 'plin', 'debito', 'credito'];
+    const METHOD_LABELS = { efectivo: 'Efectivo', yape: 'Yape', plin: 'Plin', debito: 'Débito', credito: 'Crédito' };
+    const manualMethods = METHODS.map((id) => {
+      const on = s.manualMethod === id;
+      return {
+        label: METHOD_LABELS[id],
+        bg: on ? '#E2653C' : '#FFFFFF',
+        color: on ? '#FFFBF2' : '#6B5D48',
+        border: on ? '#E2653C' : '#E9E2CF',
+        pick: () => this.setManualMethod(id)
+      };
+    });
+
+      const splitLabelFor = (payer, ratio) => {
+        if (ratio === 0) return payer === 'tu' ? 'Yo invito' : 'Tu pareja invita';
+        if (ratio === 0.5) return '50 / 50';
+        const payerPct = Math.round((1 - ratio) * 100);
+        const otherPct = Math.round(ratio * 100);
+        const payerName = payer === 'tu' ? 'Tú' : 'Pareja';
+        const otherName = payer === 'tu' ? 'Pareja' : 'Tú';
+        return payerName + ' ' + payerPct + ' / ' + otherName + ' ' + otherPct;
+      };
+
+    const items = s.items.map((it) => {
+      const isPersonal = it.who === 'personal';
+      const isPareja = it.who === 'pareja';
+      const payerLabel = 'tu ' + it.source;
+      const cats = CATS.map((label) => {
+        const on = it.category === label;
+        return {
+          label,
+          bg: on ? CAT_TINTS[label] : '#FFFFFF',
+          color: on ? CAT_COLORS[label] : '#6B5D48',
+          border: on ? CAT_COLORS[label] : '#E9E2CF',
+          pick: () => this.setCategory(it.id, label)
+        };
+      });
+      return {
+        id: it.id,
+        merchant: it.merchant,
+        metaLine: 'Pagado con ' + payerLabel + ', ' + it.time,
+        amountLabel: 'S/ ' + this.fmt(it.amount),
+        personalBg: isPersonal ? '#3A2A1E' : '#FFFFFF',
+        personalColor: isPersonal ? '#FFFBF2' : '#3A2A1E',
+        personalBorder: isPersonal ? '#3A2A1E' : '#E9E2CF',
+        parejaBg: isPareja ? '#3D7A8C' : '#FFFFFF',
+        parejaColor: isPareja ? '#FFFBF2' : '#3D7A8C',
+        parejaBorder: isPareja ? '#3D7A8C' : '#BFD8DE',
+        showSplit: isPareja,
+        splitLabel: splitLabelFor(it.payer, it.splitRatio),
+        sliderOpen: s.openSlider === it.id,
+        pct: Math.round(it.splitRatio * 100) + '%',
+        ticks: Array.from({ length: 11 }, (_, i) => ({ pick: () => this.setSplitRatio(it.id, i / 10) })),
+        cats,
+        pickPersonal: () => this.setWho(it.id, 'personal'),
+        pickPareja: () => this.setWho(it.id, 'pareja'),
+        toggleSlider: () => this.toggleSlider(it.id)
+      };
+    });
+
+    const classifiedCount = s.items.filter((it) => it.who).length;
+    const allClassified = classifiedCount === s.items.length;
+    const sharedItems = s.items.filter((it) => it.who === 'pareja' && it.splitRatio > 0);
+    // Tu pareja ya clasificó lo suyo de su lado (Cineplanet, S/45, 50/50) — nunca aparece
+    // en tu cola de clasificación, pero ya cuenta en el total y el saldo de hoy.
+    const PARTNER_ALREADY_SHARED = 45;
+    const PARTNER_ALREADY_NET = -22.5;
+    const totalShared = sharedItems.reduce((a, it) => a + it.amount, 0) + PARTNER_ALREADY_SHARED;
+    let net = PARTNER_ALREADY_NET;
+    sharedItems.forEach((it) => {
+      const share = it.amount * it.splitRatio;
+      net += it.payer === 'tu' ? share : -share;
+    });
+    const hasPending = Math.abs(net) > 0.001;
+    const owedTitle = !hasPending ? 'Están a mano' : net > 0 ? 'Tu pareja te debe' : 'Le debes a tu pareja';
+    const owedColor = !hasPending ? '#3D8C77' : '#E2653C';
+
+    const balScale = 150;
+    let balPct = 50 + (net / balScale) * 50;
+    balPct = Math.max(6, Math.min(94, balPct));
+    const balColor = !hasPending ? '#8A7A63' : net > 0 ? '#E2653C' : '#3D7A8C';
+    const balFillLeft = net >= 0 ? 50 : balPct;
+    const balFillWidth = !hasPending ? 0 : net > 0 ? balPct - 50 : 50 - balPct;
+    const balChipBg = !hasPending ? '#EAF3EF' : net > 0 ? '#FDEBE3' : '#E7F0F2';
+
+    const TIP_TEXT = {
+      hoy: 'Cada noche te preguntamos si hubo gastos con tu pareja. Un tap y listo, sin presión.',
+      historial: 'Acá ven los gastos de los dos, sin filtros. Así detectan errores o duplicados juntos.',
+      ciclos: 'Los gastos se acumulan hasta que liquidan. Ahí queda archivado con su comprobante.',
+      ajustes: 'Acá ves tu cuenta, el emparejamiento, y las preguntas frecuentes si tienes dudas.'
+    };
+    const showTip = !s.tipsSeen[s.nav];
+
+    const week = [
+      { label: 'L', done: true }, { label: 'M', done: true }, { label: 'X', done: true },
+      { label: 'J', done: true }, { label: 'V', done: true }, { label: 'S', done: true },
+      { label: 'D', done: false, today: true }
+    ].map((d) => ({ ...d, cls: d.today ? 'today' : d.done ? 'done' : '' }));
+
+    const faqDefs = [
+      { id: 'f1', q: '¿Ambos ve mis gastos 100% personales?', a: 'Sí. La transparencia es total entre los dos, para poder revisar y corregir errores o duplicados, no solo lo compartido.' },
+      { id: 'f2', q: '¿Qué pasa si no contesto el check-in un día?', a: 'Tienes un día de gracia para agregarlo al día siguiente. Aunque se te pase, el correo ya quedó capturado, no se pierde el dato.' },
+      { id: 'f3', q: '¿Puedo cambiar el 50/50 de un gasto?', a: 'Sí, toca el chip de la división en cada gasto compartido para ajustarlo.' }
+    ];
+    const faqs = faqDefs.map((f) => ({
+      ...f,
+      open: s.openFaq === f.id,
+      rotate: s.openFaq === f.id ? 'rotate(180deg)' : 'rotate(0deg)',
+      toggle: () => this.toggleFaq(f.id)
+    }));
+
+    const TU = '#E2653C';
+    const PAREJA = '#3D7A8C';
+    const allHistorial = [
+      { id: 'h1', filterKey: 'tu', person: 'Tú', personColor: TU, merchant: 'La Baguette', date: 'Ayer, 21:10', amountLabel: 'S/ 68', source: 'BCP', tagLabel: 'Pareja', category: 'Comida', isNew: false },
+      { id: 'h2', filterKey: 'pareja', person: 'Tu pareja', personColor: PAREJA, merchant: 'Cineplanet', date: 'Ayer, 19:20', amountLabel: 'S/ 45', source: 'Yape', tagLabel: 'Pareja', category: 'Salidas', isNew: true },
+      { id: 'h3', filterKey: 'tu', person: 'Tú', personColor: TU, merchant: 'Inkafarma', date: 'Hoy, 10:05', amountLabel: 'S/ 12', source: 'BCP', tagLabel: 'Personal', category: 'Compras', isNew: false },
+      { id: 'h4', filterKey: 'pareja', person: 'Tu pareja', personColor: PAREJA, merchant: 'Licoreria El Rey', date: 'Hoy, 22:35', amountLabel: 'S/ 25', source: 'Yape', tagLabel: 'Pareja', category: 'Salidas', isNew: false },
+      { id: 'h5', filterKey: 'tu', person: 'Tú', personColor: TU, merchant: 'InDrive', date: 'Hoy, 23:05', amountLabel: 'S/ 14', source: 'BCP', tagLabel: 'Pareja', category: 'Transporte', isNew: false }
+    ];
+    const historial = allHistorial
+      .filter((h) => !s.removedHistorial.includes(h.id))
+      .filter((h) => s.historialFilter === 'todos' || h.filterKey === s.historialFilter)
+      .map((h) => {
+        const ov = s.historialOverrides[h.id] || {};
+        const tagLabel = ov.tagLabel || h.tagLabel;
+        const category = ov.category || h.category;
+        const editing = s.editingHistorial === h.id;
+        const confirming = s.confirmPersonal === h.id;
+        const whoChips = ['Personal', 'Pareja'].map((label) => {
+          const on = tagLabel === label;
+          const idColor = label === 'Pareja' ? '#3D7A8C' : '#3A2A1E';
+          const idBorderOff = label === 'Pareja' ? '#BFD8DE' : '#E9E2CF';
+          return {
+            label,
+            bg: on ? idColor : '#FFFFFF',
+            color: on ? '#FFFBF2' : idColor,
+            border: on ? idColor : idBorderOff,
+            pick: () =>
+              label === 'Personal' && tagLabel === 'Pareja'
+                ? this.setState({ confirmPersonal: h.id })
+                : this.setHistorialOverride(h.id, { tagLabel: label })
+          };
+        });
+        const catChips = CATS.map((label) => {
+          const on = category === label;
+          return {
+            label,
+            bg: on ? CAT_TINTS[label] : '#FFFFFF',
+            color: on ? CAT_COLORS[label] : '#6B5D48',
+            border: on ? CAT_COLORS[label] : '#E9E2CF',
+            pick: () => this.setHistorialOverride(h.id, { category: label })
+          };
+        });
+        return {
+          ...h,
+          tagLabel,
+          category,
+          editing,
+          confirming,
+          notConfirming: !confirming,
+          whoChips,
+          catChips,
+          remove: () => this.removeHistorial(h.id),
+          edit: () => this.toggleEditHistorial(h.id),
+          cancelRemove: () => this.setState({ confirmPersonal: null }),
+          confirmRemove: () => {
+            this.setHistorialOverride(h.id, { tagLabel: 'Personal' });
+            this.removeHistorial(h.id);
+            this.setState({ confirmPersonal: null, editingHistorial: null });
+          }
+        };
+      });
+    const historialEmpty = historial.length === 0;
+
+    const chip = (active, activeColor) => ({
+      bg: active ? (activeColor || '#E2653C') : '#FFFFFF',
+      color: active ? '#FFFBF2' : '#3A2A1E',
+      border: active ? (activeColor || '#E2653C') : '#E9E2CF'
+    });
+    const fTodos = chip(s.historialFilter === 'todos');
+    const fTu = chip(s.historialFilter === 'tu');
+    const fPareja = chip(s.historialFilter === 'pareja', '#3D7A8C');
+
+    const catRows = (cats) => {
+      const max = Math.max(...Object.values(cats));
+      return CAT_ORDER.filter((name) => cats[name] > 0).map((name) => ({
+        label: name,
+        color: CAT_COLORS[name],
+        pct: Math.round((cats[name] / max) * 100) + '%',
+        amt: 'S/ ' + cats[name]
+      }));
+    };
+
+    const ciclosDef = [
+      { month: 'set', range: 'Desde el 1 set', status: 'Abierto', statusBg: '#FDEBE3', statusColor: '#E2653C', totalNum: 50, hasProof: false, showProgress: true, pct: '40%', fillColor: '#F0B429', dayLabel: '12 días abiertos', record: '9 días', cats: { Comida: 28, Salidas: 12, Transporte: 10, Compras: 0 } },
+      { month: 'ago', range: '18 – 31 ago', status: 'Liquidado', statusBg: '#E9F6EE', statusColor: '#2F8F5B', totalNum: 120, hasProof: true, showProgress: false, cats: { Comida: 45, Salidas: 38, Transporte: 15, Compras: 22 } },
+      { month: 'ago', range: '1 – 17 ago', status: 'Liquidado', statusBg: '#E9F6EE', statusColor: '#2F8F5B', totalNum: 84, hasProof: false, showProgress: false, cats: { Comida: 30, Salidas: 10, Transporte: 24, Compras: 20 } }
+    ];
+    const filteredDef = ciclosDef.filter((c) => s.dashFilter === 'anio' || c.month === s.dashFilter);
+    const ciclos = filteredDef.map((c) => ({
+      ...c,
+      total: 'S/ ' + c.totalNum + (c.status === 'Abierto' ? ' sin ajustar' : ' ajustados'),
+      cats: catRows(c.cats)
+    }));
+    const ciclosEmpty = ciclos.length === 0;
+
+    const dashTotal = filteredDef.reduce((a, c) => a + c.totalNum, 0) || 0;
+    const dashAvg = filteredDef.length ? Math.round(dashTotal / filteredDef.length) : 0;
+    const aggCats = {};
+    CAT_ORDER.forEach((name) => {
+      aggCats[name] = filteredDef.reduce((a, c) => a + (c.cats[name] || 0), 0);
+    });
+    const dashCats = catRows(aggCats);
+    const topName = dashTotal
+      ? CAT_ORDER.reduce((best, n) => (aggCats[n] > aggCats[best] ? n : best), CAT_ORDER[0])
+      : 'Sin datos';
+    const topPct = dashTotal ? Math.round((aggCats[topName] / dashTotal) * 100) : 0;
+
+    const tuTotal = Math.round(dashTotal * 0.55);
+    const parejaTotal = dashTotal - tuTotal;
+
+    const FILTERS = [
+      { id: 'anio', label: 'Año 2026' },
+      { id: 'set', label: 'Set' },
+      { id: 'ago', label: 'Ago' }
+    ];
+    const dashFilters = FILTERS.map((f) => {
+      const on = s.dashFilter === f.id;
+      return {
+        label: f.label,
+        bg: on ? '#E2653C' : '#FFFFFF',
+        color: on ? '#FFFBF2' : '#3A2A1E',
+        border: on ? '#E2653C' : '#E9E2CF',
+        pick: () => this.setState({ dashFilter: f.id })
+      };
+    });
+
+    return {
+      navHoy: s.nav === 'hoy',
+      navHistorial: s.nav === 'historial',
+      navCiclos: s.nav === 'ciclos',
+      navAjustes: s.nav === 'ajustes',
+      navHoyColor: s.nav === 'hoy' ? '#E2653C' : '#B8AA92',
+      navHistorialColor: s.nav === 'historial' ? '#E2653C' : '#B8AA92',
+      navCiclosColor: s.nav === 'ciclos' ? '#E2653C' : '#B8AA92',
+      navAjustesColor: s.nav === 'ajustes' ? '#E2653C' : '#B8AA92',
+      onNavHoy: () => this.setState({ nav: 'hoy' }),
+      onNavHistorial: () => this.setState({ nav: 'historial' }),
+      onNavCiclos: () => this.setState({ nav: 'ciclos' }),
+      onNavAjustes: () => this.setState({ nav: 'ajustes' }),
+
+      isCheckin: s.screen === 'checkin',
+      isDeclined: s.screen === 'declined',
+      isClassify: s.screen === 'classify',
+      isSaldo: s.screen === 'saldo',
+
+      showYesterday: s.yesterday === 'pending',
+      showYesterdayDone: s.yesterday === 'done',
+      onYesterdayYes: () => this.setState({ yesterday: 'done' }),
+      onYesterdayNo: () => this.setState({ yesterday: 'none' }),
+
+      settled: s.settled,
+      saldoResumen: !s.settled && s.saldoSub === 'resumen',
+      saldoComprobante: !s.settled && s.saldoSub === 'comprobante',
+      settledNote: s.hasProof ? 'Quedaron al día, con comprobante guardado.' : 'Quedaron al día los dos.',
+      hasProof: s.hasProof,
+      hasPending,
+      owedTitle,
+      owedColor,
+      proofLabel: s.hasProof ? 'Comprobante adjunto' : 'Adjuntar captura del Yape',
+      proofBorderColor: s.hasProof ? '#3D8C77' : '#E9E2CF',
+
+      items,
+      classifiedCount,
+      totalCount: s.items.length,
+      allClassified,
+      totalSharedLabel: 'S/ ' + this.fmt(totalShared),
+      pendingLabel: hasPending ? 'S/ ' + this.fmt(Math.abs(net)) : '',
+
+      week,
+      balChipBg,
+      showTip,
+      tipText: TIP_TEXT[s.nav],
+      onDismissTip: () => this.setState({ tipsSeen: { ...s.tipsSeen, [s.nav]: true } }),
+
+      manualOpen: s.manualView !== 'closed',
+      manualForm: s.manualView === 'form',
+      manualDone: s.manualView === 'done',
+      showFab: s.manualView === 'closed' && !showTip,
+      manualMethods,
+      onManualOpen: () => this.setState({ manualView: 'form' }),
+      onManualSave: () => this.setState({ manualView: 'done' }),
+      onManualClose: () => this.setState({ manualView: 'closed' }),
+
+      balPct: balPct + '%',
+      balFillLeft: balFillLeft + '%',
+      balFillWidth: balFillWidth + '%',
+      balColor,
+
+      ajustesMain: s.ajustesView === 'main',
+      ajustesAyuda: s.ajustesView === 'ayuda',
+      onOpenAyuda: () => this.setState({ ajustesView: 'ayuda' }),
+      onCloseAyuda: () => this.setState({ ajustesView: 'main' }),
+      faqs,
+
+      historial,
+      historialEmpty,
+      fTodosBg: fTodos.bg, fTodosColor: fTodos.color, fTodosBorder: fTodos.border,
+      fTuBg: fTu.bg, fTuColor: fTu.color, fTuBorder: fTu.border,
+      fParejaBg: fPareja.bg, fParejaColor: fPareja.color, fParejaBorder: fPareja.border,
+      onFilterTodos: () => this.setState({ historialFilter: 'todos' }),
+      onFilterTu: () => this.setState({ historialFilter: 'tu' }),
+      onFilterPareja: () => this.setState({ historialFilter: 'pareja' }),
+
+      ciclos,
+      ciclosEmpty,
+      dashFilters,
+      dashTotalLabel: 'S/ ' + dashTotal,
+      dashAvgLabel: 'S/ ' + dashAvg,
+      dashTopCat: topName,
+      dashTopPct: topPct + '%',
+      dashCats,
+      tuGrow: String(tuTotal),
+      parejaGrow: String(parejaTotal),
+      tuLabel: 'S/ ' + tuTotal,
+      parejaLabel: 'S/ ' + parejaTotal,
+
+      darkBg: s.dark ? '#3D8C77' : '#E9E2CF',
+      darkKnob: s.dark ? '20px' : '2px',
+      onToggleDark: () => this.setState({ dark: !s.dark }),
+
+      onYes: () => this.setState({ screen: 'classify' }),
+      onNo: () => this.setState({ screen: 'declined' }),
+      onContinue: () => this.setState({ screen: 'saldo' }),
+      onLiquidar: () => this.setState({ saldoSub: 'comprobante' }),
+      onAttach: () => this.setState({ hasProof: true }),
+      onConfirmSettle: () => this.setState({ settled: true }),
+      onReset: () =>
+        this.setState({
+          nav: 'hoy',
+          screen: 'checkin',
+          saldoSub: 'resumen',
+          hasProof: false,
+          settled: false,
+          yesterday: 'pending',
+          historialFilter: 'todos',
+          manualView: 'closed',
+          ajustesView: 'main',
+          tipsSeen: { hoy: false, historial: false, ciclos: false, ajustes: false },
+          openFaq: null,
+          dashFilter: 'anio',
+          removedHistorial: [],
+          openSlider: null,
+          editingHistorial: null,
+          confirmPersonal: null,
+          historialOverrides: {},
+          manualMethod: 'efectivo',
+          items: s.items.map((it) => ({ ...it, who: null, splitRatio: 0.5, category: null }))
+        })
+    };
+  }
+}
+</script>
+</body>
+</html>

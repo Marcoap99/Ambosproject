@@ -1,0 +1,18 @@
+{
+  "pages": [
+    { "id": "page-1", "name": "Prototipo" },
+    { "id": "page-2", "name": "Direcciones descartadas" }
+  ],
+  "artboards": [
+    { "file": "Onboarding.dc.html", "x": 0, "y": 0, "w": 390, "h": 844, "title": "1. Onboarding + emparejamiento", "is_interactive": true, "page": "page-1" },
+    { "file": "Main.dc.html", "x": 470, "y": 0, "w": 390, "h": 844, "title": "2. App — uso diario", "is_interactive": true, "page": "page-1" },
+    { "file": "DescartadaA.dc.html", "x": 0, "y": 0, "w": 390, "h": 844, "title": "A · Calma cálida", "page": "page-2" },
+    { "file": "DirectionC.dc.html", "x": 470, "y": 0, "w": 390, "h": 844, "title": "C · Directo y claro", "page": "page-2" }
+  ],
+  "annotations": [
+    { "id": "note-onb", "x": 0, "y": -110, "w": 390, "text": "Primera vez: datos → Gmail → Yape/Plin → invitar pareja → conectados.", "page": "page-1" },
+    { "id": "note-app", "x": 470, "y": -110, "w": 390, "text": "Uso diario: check-in → clasificar (con categoría) → saldo bidireccional → Historial (filtrable) → Ciclos → Ajustes.", "page": "page-1" },
+    { "id": "note-discard", "x": 0, "y": -80, "w": 860, "text": "Direcciones no elegidas, guardadas de referencia.", "page": "page-2" }
+  ],
+  "launch": { "view": "canvas", "page": "page-1" }
+}
