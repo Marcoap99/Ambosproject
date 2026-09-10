@@ -1,0 +1,61 @@
+/* Tokens 1:1 con DESIGN_SYSTEM.md §1-3. No hardcodear estos valores en componentes — usar las variables. */
+:root {
+  /* Base */
+  --color-bg: #FFFBF2;
+  --color-surface: #FFFFFF;
+  --color-surface-muted: #F5F0E4;
+  --color-border: #F0EADA;
+  --color-ink: #3A2A1E;
+  --color-ink-muted: #8A7A63;
+  --color-ink-muted-2: #6B5D48;
+  --color-ink-disabled: #B8AA92;
+
+  /* Acento */
+  --color-accent: #E2653C;
+  --color-accent-gold: #F0B429;
+  --color-pareja: #3D7A8C;
+  --color-positivo: #3D8C77;
+
+  /* Tintes */
+  --color-tint-coral: #FDEBE3;
+  --color-tint-gold: #FBF2E2;
+  --color-tint-green: #E9F6EE;
+  --color-tint-teal: #E7F0F2;
+
+  /* Categorías — orden fijo, nunca reasignar por posición/monto (DESIGN_SYSTEM.md §1) */
+  --color-cat-comida: #2a78d6;
+  --color-cat-salidas: #eb6834;
+  --color-cat-transporte: #1baf7a;
+  --color-cat-compras: #eda100;
+
+  /* Radios */
+  --radius-card: 18px;
+  --radius-button: 22px;
+  --radius-pill: 999px;
+  --radius-input: 16px;
+
+  /* Tipografía */
+  --font-display: "Architects Daughter", cursive;
+  --font-ui: "IBM Plex Sans", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-ui);
+}
+
+.font-display {
+  font-family: var(--font-display);
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
