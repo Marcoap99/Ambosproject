@@ -22,7 +22,7 @@ Un solo OAuth de Google en el registro, pidiendo el scope `gmail.readonly` de un
 | M0 | 🟢 hecho | Scaffolding Next.js 16 + TS, PWA manifest, tokens de diseño, esqueleto Supabase, MCP de Supabase conectado al proyecto cloud |
 | M1 | 🟢 hecho | Migraciones (§6) + RLS que fuerza §7.4 a nivel de BD, emparejamiento con invite code, `lib/balance.ts` con tests (§7.1–7.3), login con Google (scope Gmail pedido, pipeline sin activar), onboarding (nombre, medios de pago, emparejar) |
 | M2 | 🟢 hecho | Check-in, registro manual (Gemini), Clasificar, Saldo, Historial, Liquidar (con comprobante en Storage), Ciclos |
-| M3 | ⬜ | Pipeline Gmail: `watch()` + Pub/Sub + parseo → `Movement`, descarte silencioso sin confianza (§5.3) |
+| M3 | 🟡 en progreso | Código del pipeline Gmail hecho (guardar token, `watch()`, webhook, parseo, cron de renovación). Falta: setup de Google Cloud Pub/Sub (externo, ver sección de abajo) |
 | M4 | ⬜ | Push VAPID (recordatorio 8pm), borrar cuenta (§8), estados vacíos/loading, remover copa de vino de `hug.jpg` si se decide regenerar |
 
 ## Reglas duras — nunca romper
@@ -48,6 +48,21 @@ Estas son inferencias técnicas razonables sobre huecos del PRD, no cambios de p
 - **Voz → texto**: el PRD (§4.1) sugiere Web Speech API para dictar el gasto. Se dejó fuera de este primer corte de M2 (solo texto por ahora) — se puede agregar después como mejora progresiva sin tocar el resto del flujo.
 - **"Resumen general" de Ciclos sin filtro de mes/año todavía**: PRD §5.7 pide un resumen agregado filtrable por mes/año a la fecha. Se construyó el dashboard del ciclo abierto (gasto por categoría, días abiertos, récord) y la lista de ciclos liquidados con su comprobante — el resumen histórico agregado con filtro de fecha se deja pendiente de un pase de pulido, no bloquea el uso diario de la app.
 - **Regla de lint `react-hooks/set-state-in-effect` (React Compiler beta de Next 16)**: se comprobó con un repro mínimo que marca el patrón estándar "fetch en `useEffect` + `setState`" de forma inconsistente — lo deja pasar en componentes con más código (`/hoy`, `/onboarding/emparejar`) pero lo marca en componentes chicos (`/clasificar`, `/saldo`) con el mismo patrón exacto. Se desactivó puntualmente con `eslint-disable-next-line` + comentario en esos 2 archivos. Si en un futuro update de Next/eslint-config-next esto se estabiliza, se puede quitar el disable y confirmar que ya no dispara.
+
+## Decisiones de implementación tomadas sin preguntar (M3)
+
+- **Refresh token propio, no el de Supabase**: Supabase no refresca automáticamente el `provider_token` de Google en segundo plano — solo entrega lo que Google dio al momento del login. Para poder leer Gmail sin que el usuario tenga la sesión abierta (el webhook se dispara solo), se captura `provider_refresh_token` en `/auth/callback` (requiere `access_type=offline`+`prompt=consent`, ya pedido desde M1) y se guarda en `gmail_credentials`, una tabla **sin ninguna policy de RLS para 'authenticated'** — deny-by-default, solo el backend con la service role key puede tocarla (PRD §8).
+- **Autenticación del webhook por token en la URL, no JWT completo de Pub/Sub**: suficiente para un piloto de 2 personas — en el peor caso alguien crea un `Movement` espurio sin clasificar (borrable), nunca compromete datos privados (§7.4 sigue aplicando).
+- **Confianza del parseo de correos = chequeo determinístico, no un score de Gemini**: se le pide un booleano "¿es notificación de pago?" + los campos, y la confianza real es `monto > 0 AND comercio no vacío AND es_notificacion_de_pago`. Pedirle a un LLM un número de confianza calibrado no es confiable.
+- **Renovación del `watch()` con Vercel Cron** (`vercel.json`, diario): el `watch()` de Gmail expira a los 7 días. Se intenta activar también en el login mismo (best-effort, no rompe el login si Pub/Sub aún no está configurado).
+
+## Pendiente para que M3 funcione en vivo (setup externo en Google Cloud)
+
+1. **Copiar el Client ID/Secret de Google** (los mismos que ya se usaron para configurar el proveedor Google en Supabase, Google Cloud Console → Credentials) a las variables `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` — hacen falta para refrescar el access token nosotros mismos, sin pasar por Supabase.
+2. **Crear un tema de Pub/Sub** en el mismo proyecto de Google Cloud: Pub/Sub → Topics → Create Topic (ej. `gmail-notifications`). El nombre completo (`projects/<PROJECT_ID>/topics/gmail-notifications`) va en `GMAIL_PUBSUB_TOPIC`.
+3. **Darle permiso a Gmail para publicar en ese tema**: en el topic → Permissions → Add Principal → `gmail-api-push@system.gserviceaccount.com` con el rol "Pub/Sub Publisher".
+4. **Crear una suscripción push** sobre ese tema, apuntando a `https://<tu-vercel>/api/gmail/webhook?token=<GMAIL_WEBHOOK_SECRET>` (el secreto ya generado queda en `.env.local`/Vercel).
+5. **Variables de entorno en Vercel**: agregar las mismas que están en `.env.local.example` (incluida `CRON_SECRET`, ya generado) al proyecto de Vercel.
 
 ## M2 — validado en vivo contra el proyecto real (2026-09-10)
 
