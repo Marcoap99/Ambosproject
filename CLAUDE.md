@@ -21,7 +21,7 @@ Un solo OAuth de Google en el registro, pidiendo el scope `gmail.readonly` de un
 |---|---|---|
 | M0 | 🟢 hecho | Scaffolding Next.js 16 + TS, PWA manifest, tokens de diseño, esqueleto Supabase, MCP de Supabase conectado al proyecto cloud |
 | M1 | 🟢 hecho | Migraciones (§6) + RLS que fuerza §7.4 a nivel de BD, emparejamiento con invite code, `lib/balance.ts` con tests (§7.1–7.3), login con Google (scope Gmail pedido, pipeline sin activar), onboarding (nombre, medios de pago, emparejar) |
-| M2 | ⬜ | Check-in ("Hoy"), Clasificar (Personal/Pareja, slider split, categoría), registro manual por chat (Claude API), Saldo, Ciclos+Liquidar, Historial — todo con `source=manual`, sin Gmail |
+| M2 | 🟡 en progreso | Check-in ("Hoy") + registro manual por chat (Claude API) — hecho. Falta: Clasificar, Saldo, Ciclos+Liquidar, Historial |
 | M3 | ⬜ | Pipeline Gmail: `watch()` + Pub/Sub + parseo → `Movement`, descarte silencioso sin confianza (§5.3) |
 | M4 | ⬜ | Push VAPID (recordatorio 8pm), borrar cuenta (§8), estados vacíos/loading, remover copa de vino de `hug.jpg` si se decide regenerar |
 
@@ -40,6 +40,12 @@ Estas son inferencias técnicas razonables sobre huecos del PRD, no cambios de p
 
 - **"Efectivo" como medio de pago**: el PRD lo pide priorizado en el registro manual (§5.5) pero no está en el enum de `PaymentMethod.tipo` del onboarding (§5.1/§6). Se agregó `efectivo` al enum y se auto-crea ese `PaymentMethod` para cada usuario nuevo (no es seleccionable en onboarding, simplemente ya existe).
 - **Detección de "onboarding completo"**: como no hay una columna explícita de progreso, `app/page.tsx` infiere el paso pendiente por lo que ya existe en BD (nombre vacío → falta nombre; solo el `PaymentMethod` "efectivo" → falta esa selección; sin `couple.user_b_id` → falta emparejar). Si en algún milestone se necesita un estado de onboarding más explícito, agregar una columna en vez de seguir infiriendo.
+
+## Decisiones de implementación tomadas sin preguntar (M2)
+
+- **Tabla `check_ins`** (migración 0004): el PRD describe el check-in diario y la racha de 7 días (§5.2) pero no la modela en §6. Se agregó `check_ins(user_id, fecha, tuvo_gastos)` — sin esto no se puede calcular la racha ni el banner de día de gracia sin adivinar en el cliente.
+- **Modelo de Claude para el parseo de gastos** (`app/api/parse-expense`): Haiku 4.5, no el modelo más grande — es una extracción estructurada de una frase corta, no una tarea que necesite el modelo más capaz.
+- **Voz → texto**: el PRD (§4.1) sugiere Web Speech API para dictar el gasto. Se dejó fuera de este primer corte de M2 (solo texto por ahora) — se puede agregar después como mejora progresiva sin tocar el resto del flujo.
 
 ## M1 — validado en vivo contra el proyecto real (2026-09-10)
 
