@@ -14,7 +14,7 @@ export function FloatingAddButton() {
       aria-label="Registrar gasto"
       style={{
         position: "fixed",
-        bottom: 24,
+        bottom: 76,
         right: 24,
         width: 56,
         height: 56,
