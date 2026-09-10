@@ -49,6 +49,16 @@ Estas son inferencias técnicas razonables sobre huecos del PRD, no cambios de p
 - **"Resumen general" de Ciclos sin filtro de mes/año todavía**: PRD §5.7 pide un resumen agregado filtrable por mes/año a la fecha. Se construyó el dashboard del ciclo abierto (gasto por categoría, días abiertos, récord) y la lista de ciclos liquidados con su comprobante — el resumen histórico agregado con filtro de fecha se deja pendiente de un pase de pulido, no bloquea el uso diario de la app.
 - **Regla de lint `react-hooks/set-state-in-effect` (React Compiler beta de Next 16)**: se comprobó con un repro mínimo que marca el patrón estándar "fetch en `useEffect` + `setState`" de forma inconsistente — lo deja pasar en componentes con más código (`/hoy`, `/onboarding/emparejar`) pero lo marca en componentes chicos (`/clasificar`, `/saldo`) con el mismo patrón exacto. Se desactivó puntualmente con `eslint-disable-next-line` + comentario en esos 2 archivos. Si en un futuro update de Next/eslint-config-next esto se estabiliza, se puede quitar el disable y confirmar que ya no dispara.
 
+## M2 — validado en vivo contra el proyecto real (2026-09-10)
+
+Prueba de extremo a extremo con 4 usuarios de prueba (email/password, sin pasar por Google) directo contra Supabase real: emparejamiento, privacidad §7.4, saldo bidireccional §7.1, check-in, liquidar ciclo. Se encontraron y arreglaron 3 problemas reales en el camino:
+
+1. **Bug de emparejamiento** (reportado por Marco probando con su pareja): si ambos generaban su propio código en vez de que uno usara el del otro, quedaban atascados. Fix en migración 0006.
+2. **Bug en `liquidar_ciclo`**: variable local `couple_id` colisionaba con la columna del mismo nombre → "column reference ambiguous". Fix en migración 0007 (renombrada a `v_couple_id`).
+3. **Migración 0004 (`check_ins`) nunca se había aplicado** contra el proyecto real — se me pasó pedírsela a Marco cuando se construyó M2. No era un bug de código, solo un paso saltado.
+
+Los 3 fixes se re-probaron después de aplicados y quedaron confirmados funcionando.
+
 ## M1 — validado en vivo contra el proyecto real (2026-09-10)
 
 Los 3 pasos manuales (Google OAuth en Supabase, `.env.local`, migraciones) ya se hicieron. Se verificó extremo a extremo sin loguearse con una cuenta real:
