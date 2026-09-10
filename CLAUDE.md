@@ -21,7 +21,7 @@ Un solo OAuth de Google en el registro, pidiendo el scope `gmail.readonly` de un
 |---|---|---|
 | M0 | 🟢 hecho | Scaffolding Next.js 16 + TS, PWA manifest, tokens de diseño, esqueleto Supabase, MCP de Supabase conectado al proyecto cloud |
 | M1 | 🟢 hecho | Migraciones (§6) + RLS que fuerza §7.4 a nivel de BD, emparejamiento con invite code, `lib/balance.ts` con tests (§7.1–7.3), login con Google (scope Gmail pedido, pipeline sin activar), onboarding (nombre, medios de pago, emparejar) |
-| M2 | 🟡 en progreso | Check-in + registro manual + Clasificar + Saldo — hecho. Falta: Ciclos+Liquidar, Historial |
+| M2 | 🟢 hecho | Check-in, registro manual (Gemini), Clasificar, Saldo, Historial, Liquidar (con comprobante en Storage), Ciclos |
 | M3 | ⬜ | Pipeline Gmail: `watch()` + Pub/Sub + parseo → `Movement`, descarte silencioso sin confianza (§5.3) |
 | M4 | ⬜ | Push VAPID (recordatorio 8pm), borrar cuenta (§8), estados vacíos/loading, remover copa de vino de `hug.jpg` si se decide regenerar |
 
@@ -46,6 +46,7 @@ Estas son inferencias técnicas razonables sobre huecos del PRD, no cambios de p
 - **Tabla `check_ins`** (migración 0004): el PRD describe el check-in diario y la racha de 7 días (§5.2) pero no la modela en §6. Se agregó `check_ins(user_id, fecha, tuvo_gastos)` — sin esto no se puede calcular la racha ni el banner de día de gracia sin adivinar en el cliente.
 - **Parseo de gastos con Gemini, no Claude** (`app/api/parse-expense`): decisión de costo de Marco para el MVP — "no quiero gastar aún". Usa `gemini-flash-lite-latest` (nivel gratuito de **Google AI Studio**, no Vertex AI/Cloud Console — esa puerta sí pide tarjeta) vía REST directo (`fetch`, sin SDK adicional). La key va en `GEMINI_API_KEY`. Sacarla en `aistudio.google.com/apikey`. Si más adelante se quiere volver a Claude (mejor calidad de extracción, sigue siendo barato — ver conversación), es un cambio de un solo archivo: reintroducir `@anthropic-ai/sdk` y adaptar `route.ts` al patrón de tool-use que ya se había validado antes.
 - **Voz → texto**: el PRD (§4.1) sugiere Web Speech API para dictar el gasto. Se dejó fuera de este primer corte de M2 (solo texto por ahora) — se puede agregar después como mejora progresiva sin tocar el resto del flujo.
+- **"Resumen general" de Ciclos sin filtro de mes/año todavía**: PRD §5.7 pide un resumen agregado filtrable por mes/año a la fecha. Se construyó el dashboard del ciclo abierto (gasto por categoría, días abiertos, récord) y la lista de ciclos liquidados con su comprobante — el resumen histórico agregado con filtro de fecha se deja pendiente de un pase de pulido, no bloquea el uso diario de la app.
 - **Regla de lint `react-hooks/set-state-in-effect` (React Compiler beta de Next 16)**: se comprobó con un repro mínimo que marca el patrón estándar "fetch en `useEffect` + `setState`" de forma inconsistente — lo deja pasar en componentes con más código (`/hoy`, `/onboarding/emparejar`) pero lo marca en componentes chicos (`/clasificar`, `/saldo`) con el mismo patrón exacto. Se desactivó puntualmente con `eslint-disable-next-line` + comentario en esos 2 archivos. Si en un futuro update de Next/eslint-config-next esto se estabiliza, se puede quitar el disable y confirmar que ya no dispara.
 
 ## M1 — validado en vivo contra el proyecto real (2026-09-10)

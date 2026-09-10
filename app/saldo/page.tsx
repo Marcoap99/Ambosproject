@@ -69,14 +69,16 @@ export default function SaldoPage() {
         <p style={{ fontSize: 18, fontWeight: 600 }}>{label}</p>
       </div>
 
-      <button
-        type="button"
-        className="chip"
-        style={{ marginTop: 24 }}
-        onClick={() => router.push("/historial")}
-      >
-        Ver historial
-      </button>
+      <div style={{ display: "flex", gap: 12, justifyContent: "center", marginTop: 24 }}>
+        <button type="button" className="chip" onClick={() => router.push("/historial")}>
+          Ver historial
+        </button>
+        {net !== 0 && (
+          <button className="button-primary" onClick={() => router.push("/liquidar")}>
+            Liquidar
+          </button>
+        )}
+      </div>
     </main>
   );
 }
