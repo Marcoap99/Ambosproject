@@ -30,6 +30,16 @@ Un solo OAuth de Google en el registro, pidiendo el scope `gmail.readonly` de un
 1. **§7.1 Saldo bidireccional**: siempre se calcula sumando los `Movement` reales de los dos usuarios del `Couple` desde la base de datos. **Cero constantes hardcodeadas** tipo `PARTNER_ALREADY_SHARED`/`NET` — eso fue un hack exclusivo del wireframe de una sola pantalla, no existe en el build real.
 2. **§7.4 Privacidad**: un usuario nunca ve los `Movement` sin clasificar (`classification IS NULL`) de su pareja. Se aplica con **RLS en Supabase**, no solo con un filtro en el frontend — es una regla de datos, no de UI.
 
+## Cómo comunicar con Marco
+
+No es developer — no preguntarle cosas técnicas (nombres de tablas, RLS, versiones de librerías). Explicar en plano qué se construyó y qué implica para el producto. Reservar preguntas para decisiones de producto/UX reales, nunca de implementación.
+
+## Decisiones de implementación tomadas sin preguntar (M1)
+
+Estas son inferencias técnicas razonables sobre huecos del PRD, no cambios de producto — documentadas acá para que quede registro, sin molestar a Marco con ellas:
+
+- **"Efectivo" como medio de pago**: el PRD lo pide priorizado en el registro manual (§5.5) pero no está en el enum de `PaymentMethod.tipo` del onboarding (§5.1/§6). Se agregó `efectivo` al enum y se auto-crea ese `PaymentMethod` para cada usuario nuevo (no es seleccionable en onboarding, simplemente ya existe).
+
 ## Convenciones
 
 - Idioma de UI: español (único idioma del MVP).
