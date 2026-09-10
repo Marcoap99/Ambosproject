@@ -41,14 +41,27 @@ Estas son inferencias técnicas razonables sobre huecos del PRD, no cambios de p
 - **"Efectivo" como medio de pago**: el PRD lo pide priorizado en el registro manual (§5.5) pero no está en el enum de `PaymentMethod.tipo` del onboarding (§5.1/§6). Se agregó `efectivo` al enum y se auto-crea ese `PaymentMethod` para cada usuario nuevo (no es seleccionable en onboarding, simplemente ya existe).
 - **Detección de "onboarding completo"**: como no hay una columna explícita de progreso, `app/page.tsx` infiere el paso pendiente por lo que ya existe en BD (nombre vacío → falta nombre; solo el `PaymentMethod` "efectivo" → falta esa selección; sin `couple.user_b_id` → falta emparejar). Si en algún milestone se necesita un estado de onboarding más explícito, agregar una columna en vez de seguir infiriendo.
 
-## Pendiente para que M1 funcione en vivo (fuera de lo que Claude puede hacer solo)
+## M1 — validado en vivo contra el proyecto real (2026-09-10)
 
-1. **Configurar el proveedor Google en Supabase** (Authentication → Providers → Google del dashboard): necesita un Client ID/Secret de un proyecto en Google Cloud Console con el scope `gmail.readonly` habilitado como scope sensible. Paso manual de Marco — Claude no tiene acceso a Google Cloud Console.
-2. **Llenar `.env.local`** (copiar `.env.local.example`) con la URL y anon key del proyecto Supabase.
-3. **Aplicar las migraciones** de `supabase/migrations/` contra el proyecto real (vía el MCP de Supabase una vez conectado, o `supabase db push` desde una máquina con Docker).
+Los 3 pasos manuales (Google OAuth en Supabase, `.env.local`, migraciones) ya se hicieron. Se verificó extremo a extremo sin loguearse con una cuenta real:
+- `/` sin sesión redirige a `/login` (307).
+- El botón "Continuar con Google" golpea `/auth/v1/authorize` de Supabase, que devuelve 302 a `accounts.google.com` con el `client_id` real y `scope=email profile https://www.googleapis.com/auth/gmail.readonly` — Google OAuth está bien conectado de punta a punta.
+- RLS confirmada activa: `GET /rest/v1/users` sin sesión devuelve `[]` (antes de RLS habría devuelto error o todas las filas).
+
+`.env.local` tiene las credenciales reales — **no está commiteado** (ver `.gitignore`), solo vive en este sandbox para poder probar la app.
 
 ## Convenciones
 
 - Idioma de UI: español (único idioma del MVP).
 - Moneda: siempre PEN, sin multi-moneda.
 - Commits en español o inglés técnico simple, uno por unidad de trabajo coherente (no uno por archivo).
+
+<!-- BEGIN:nextjs-agent-rules -->
+
+# This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->
