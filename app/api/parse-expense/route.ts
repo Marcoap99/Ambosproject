@@ -1,16 +1,22 @@
 import { NextResponse } from "next/server";
 
+import { extractStructuredJSON } from "@/lib/geminiExtract";
+
 // PRD §5.5: registro manual en lenguaje natural, "propongo, confirmas".
 // Gemini Flash-Lite (nivel gratuito de Google AI Studio) — decisión de
-// costo de Marco para el MVP, ver CLAUDE.md. "-latest" evita romperse cada
-// vez que Google retira una versión puntual del modelo.
-const MODEL = "gemini-flash-lite-latest";
+// costo de Marco para el MVP, ver CLAUDE.md.
 
-const RESPONSE_SCHEMA = {
+const EXPENSE_SCHEMA = {
   type: "OBJECT",
   properties: {
-    monto: { type: "NUMBER", description: "Monto del gasto en soles (PEN), sin el símbolo S/." },
-    comercio: { type: "STRING", description: "Nombre del comercio mencionado, o cadena vacía." },
+    monto: {
+      type: "NUMBER",
+      description: "Monto del gasto en soles (PEN), sin el símbolo S/.",
+    },
+    comercio: {
+      type: "STRING",
+      description: "Nombre del comercio mencionado, o cadena vacía.",
+    },
     categoria: {
       type: "STRING",
       enum: ["Comida", "Salidas", "Transporte", "Compras", "Otro"],
@@ -25,6 +31,13 @@ const RESPONSE_SCHEMA = {
   required: ["monto", "comercio", "categoria", "medio_pago"],
 };
 
+interface ExpenseExtraction {
+  monto: number;
+  comercio: string;
+  categoria: string;
+  medio_pago: string;
+}
+
 export async function POST(request: Request) {
   const body = await request.json().catch(() => null);
   const text = body?.text;
@@ -32,46 +45,13 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "missing_text" }, { status: 400 });
   }
 
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) {
-    return NextResponse.json({ error: "missing_api_key" }, { status: 500 });
-  }
-
   try {
-    const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${apiKey}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contents: [
-            {
-              parts: [
-                {
-                  text: `Extrae los datos de este gasto en soles peruanos (PEN), descrito en lenguaje natural: "${text}"`,
-                },
-              ],
-            },
-          ],
-          generationConfig: {
-            responseMimeType: "application/json",
-            responseSchema: RESPONSE_SCHEMA,
-          },
-        }),
-      },
+    const result = await extractStructuredJSON<ExpenseExtraction>(
+      `Extrae los datos de este gasto en soles peruanos (PEN), descrito en lenguaje natural: "${text}"`,
+      EXPENSE_SCHEMA,
     );
-
-    if (!res.ok) {
-      return NextResponse.json({ error: "gemini_api_error" }, { status: 502 });
-    }
-
-    const data = await res.json();
-    const jsonText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-    if (!jsonText) {
-      return NextResponse.json({ error: "parse_failed" }, { status: 422 });
-    }
-
-    return NextResponse.json(JSON.parse(jsonText));
+    if (!result) return NextResponse.json({ error: "parse_failed" }, { status: 422 });
+    return NextResponse.json(result);
   } catch {
     return NextResponse.json({ error: "gemini_api_error" }, { status: 502 });
   }
