@@ -1,0 +1,11 @@
+{
+  "name": "Ambos",
+  "short_name": "Ambos",
+  "description": "Gastos compartidos de pareja, sin anotar nada a mano.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FFFBF2",
+  "theme_color": "#FFFBF2",
+  "lang": "es",
+  "icons": []
+}
