@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
+import { FloatingAddButton } from "@/components/FloatingAddButton";
 import { shouldShowGraceBanner, weeklyStreak } from "@/lib/checkin";
 import { addDays, getLocalDateString, yesterdayOf } from "@/lib/date";
 import { createClient } from "@/lib/supabase/client";
@@ -170,29 +171,3 @@ function StreakRow({ week }: { week: { fecha: string; respondido: boolean }[] })
   );
 }
 
-export function FloatingAddButton() {
-  const router = useRouter();
-  return (
-    <button
-      type="button"
-      onClick={() => router.push("/registrar")}
-      aria-label="Registrar gasto"
-      style={{
-        position: "fixed",
-        bottom: 24,
-        right: 24,
-        width: 56,
-        height: 56,
-        borderRadius: "999px",
-        background: "var(--color-accent)",
-        color: "#fff",
-        border: "none",
-        fontSize: 28,
-        boxShadow: "0 4px 0 rgba(0,0,0,.12)",
-        cursor: "pointer",
-      }}
-    >
-      +
-    </button>
-  );
-}

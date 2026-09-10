@@ -21,7 +21,7 @@ Un solo OAuth de Google en el registro, pidiendo el scope `gmail.readonly` de un
 |---|---|---|
 | M0 | 🟢 hecho | Scaffolding Next.js 16 + TS, PWA manifest, tokens de diseño, esqueleto Supabase, MCP de Supabase conectado al proyecto cloud |
 | M1 | 🟢 hecho | Migraciones (§6) + RLS que fuerza §7.4 a nivel de BD, emparejamiento con invite code, `lib/balance.ts` con tests (§7.1–7.3), login con Google (scope Gmail pedido, pipeline sin activar), onboarding (nombre, medios de pago, emparejar) |
-| M2 | 🟡 en progreso | Check-in ("Hoy") + registro manual por chat (Claude API) — hecho. Falta: Clasificar, Saldo, Ciclos+Liquidar, Historial |
+| M2 | 🟡 en progreso | Check-in + registro manual + Clasificar + Saldo — hecho. Falta: Ciclos+Liquidar, Historial |
 | M3 | ⬜ | Pipeline Gmail: `watch()` + Pub/Sub + parseo → `Movement`, descarte silencioso sin confianza (§5.3) |
 | M4 | ⬜ | Push VAPID (recordatorio 8pm), borrar cuenta (§8), estados vacíos/loading, remover copa de vino de `hug.jpg` si se decide regenerar |
 
@@ -46,6 +46,7 @@ Estas son inferencias técnicas razonables sobre huecos del PRD, no cambios de p
 - **Tabla `check_ins`** (migración 0004): el PRD describe el check-in diario y la racha de 7 días (§5.2) pero no la modela en §6. Se agregó `check_ins(user_id, fecha, tuvo_gastos)` — sin esto no se puede calcular la racha ni el banner de día de gracia sin adivinar en el cliente.
 - **Modelo de Claude para el parseo de gastos** (`app/api/parse-expense`): Haiku 4.5, no el modelo más grande — es una extracción estructurada de una frase corta, no una tarea que necesite el modelo más capaz.
 - **Voz → texto**: el PRD (§4.1) sugiere Web Speech API para dictar el gasto. Se dejó fuera de este primer corte de M2 (solo texto por ahora) — se puede agregar después como mejora progresiva sin tocar el resto del flujo.
+- **Regla de lint `react-hooks/set-state-in-effect` (React Compiler beta de Next 16)**: se comprobó con un repro mínimo que marca el patrón estándar "fetch en `useEffect` + `setState`" de forma inconsistente — lo deja pasar en componentes con más código (`/hoy`, `/onboarding/emparejar`) pero lo marca en componentes chicos (`/clasificar`, `/saldo`) con el mismo patrón exacto. Se desactivó puntualmente con `eslint-disable-next-line` + comentario en esos 2 archivos. Si en un futuro update de Next/eslint-config-next esto se estabiliza, se puede quitar el disable y confirmar que ya no dispara.
 
 ## M1 — validado en vivo contra el proyecto real (2026-09-10)
 
