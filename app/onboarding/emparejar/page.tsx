@@ -17,6 +17,7 @@ export default function EmparejarPage() {
   const [state, setState] = useState<CoupleState>({ status: "loading" });
   const [redeemCode, setRedeemCode] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [switchingToRedeem, setSwitchingToRedeem] = useState(false);
   const router = useRouter();
   // createClient() se llama dentro de cada handler/effect (no al nivel del
   // render) para no ejecutarse durante el SSR de este Client Component.
@@ -81,7 +82,7 @@ export default function EmparejarPage() {
 
   if (state.status === "loading") return null;
 
-  if (state.status === "waiting") {
+  if (state.status === "waiting" && !switchingToRedeem) {
     const waMessage = encodeURIComponent(
       `Únete a Ambos conmigo — usa este código al registrarte: ${state.inviteCode}`,
     );
@@ -102,6 +103,21 @@ export default function EmparejarPage() {
         <p style={{ color: "var(--color-ink-muted)", marginTop: 16 }}>
           En cuanto tu pareja lo use, quedan conectados automáticamente.
         </p>
+        <button
+          type="button"
+          onClick={() => setSwitchingToRedeem(true)}
+          style={{
+            marginTop: 24,
+            border: "none",
+            background: "none",
+            color: "var(--color-ink-muted-2)",
+            textDecoration: "underline",
+            cursor: "pointer",
+            fontSize: 14,
+          }}
+        >
+          ¿Tu pareja ya tiene un código? Ingrésalo acá
+        </button>
       </main>
     );
   }
@@ -109,10 +125,14 @@ export default function EmparejarPage() {
   return (
     <main style={{ padding: 24, textAlign: "center" }}>
       <h1 className="font-display">Empareja tu cuenta</h1>
-      <button className="button-primary" onClick={handleCreate}>
-        Generar código de invitación
-      </button>
-      <p style={{ margin: "20px 0", color: "var(--color-ink-muted)" }}>o</p>
+      {!switchingToRedeem && (
+        <>
+          <button className="button-primary" onClick={handleCreate}>
+            Generar código de invitación
+          </button>
+          <p style={{ margin: "20px 0", color: "var(--color-ink-muted)" }}>o</p>
+        </>
+      )}
       <form onSubmit={handleRedeem} style={{ display: "grid", gap: 12, placeItems: "center" }}>
         <input
           className="input"
@@ -126,6 +146,23 @@ export default function EmparejarPage() {
         </button>
       </form>
       {error && <p className="error-text">{error}</p>}
+      {switchingToRedeem && (
+        <button
+          type="button"
+          onClick={() => setSwitchingToRedeem(false)}
+          style={{
+            marginTop: 16,
+            border: "none",
+            background: "none",
+            color: "var(--color-ink-muted-2)",
+            textDecoration: "underline",
+            cursor: "pointer",
+            fontSize: 14,
+          }}
+        >
+          Volver a mi código
+        </button>
+      )}
     </main>
   );
 }
