@@ -20,7 +20,7 @@ Un solo OAuth de Google en el registro, pidiendo el scope `gmail.readonly` de un
 | # | Estado | Qué incluye |
 |---|---|---|
 | M0 | 🟢 hecho | Scaffolding Next.js 16 + TS, PWA manifest, tokens de diseño, esqueleto Supabase, MCP de Supabase conectado al proyecto cloud |
-| M1 | ⬜ | Migraciones completas (§6 del PRD) + RLS que fuerza §7.4 a nivel de BD, emparejamiento con invite code, `lib/balance.ts` con tests (§7.1–7.3), Google OAuth con scope Gmail |
+| M1 | 🟢 hecho | Migraciones (§6) + RLS que fuerza §7.4 a nivel de BD, emparejamiento con invite code, `lib/balance.ts` con tests (§7.1–7.3), login con Google (scope Gmail pedido, pipeline sin activar), onboarding (nombre, medios de pago, emparejar) |
 | M2 | ⬜ | Check-in ("Hoy"), Clasificar (Personal/Pareja, slider split, categoría), registro manual por chat (Claude API), Saldo, Ciclos+Liquidar, Historial — todo con `source=manual`, sin Gmail |
 | M3 | ⬜ | Pipeline Gmail: `watch()` + Pub/Sub + parseo → `Movement`, descarte silencioso sin confianza (§5.3) |
 | M4 | ⬜ | Push VAPID (recordatorio 8pm), borrar cuenta (§8), estados vacíos/loading, remover copa de vino de `hug.jpg` si se decide regenerar |
@@ -39,6 +39,13 @@ No es developer — no preguntarle cosas técnicas (nombres de tablas, RLS, vers
 Estas son inferencias técnicas razonables sobre huecos del PRD, no cambios de producto — documentadas acá para que quede registro, sin molestar a Marco con ellas:
 
 - **"Efectivo" como medio de pago**: el PRD lo pide priorizado en el registro manual (§5.5) pero no está en el enum de `PaymentMethod.tipo` del onboarding (§5.1/§6). Se agregó `efectivo` al enum y se auto-crea ese `PaymentMethod` para cada usuario nuevo (no es seleccionable en onboarding, simplemente ya existe).
+- **Detección de "onboarding completo"**: como no hay una columna explícita de progreso, `app/page.tsx` infiere el paso pendiente por lo que ya existe en BD (nombre vacío → falta nombre; solo el `PaymentMethod` "efectivo" → falta esa selección; sin `couple.user_b_id` → falta emparejar). Si en algún milestone se necesita un estado de onboarding más explícito, agregar una columna en vez de seguir infiriendo.
+
+## Pendiente para que M1 funcione en vivo (fuera de lo que Claude puede hacer solo)
+
+1. **Configurar el proveedor Google en Supabase** (Authentication → Providers → Google del dashboard): necesita un Client ID/Secret de un proyecto en Google Cloud Console con el scope `gmail.readonly` habilitado como scope sensible. Paso manual de Marco — Claude no tiene acceso a Google Cloud Console.
+2. **Llenar `.env.local`** (copiar `.env.local.example`) con la URL y anon key del proyecto Supabase.
+3. **Aplicar las migraciones** de `supabase/migrations/` contra el proyecto real (vía el MCP de Supabase una vez conectado, o `supabase db push` desde una máquina con Docker).
 
 ## Convenciones
 
