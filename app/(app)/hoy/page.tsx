@@ -148,6 +148,20 @@ export default function HoyPage() {
         </>
       )}
 
+      <p
+        style={{
+          position: "fixed",
+          bottom: 140,
+          left: 0,
+          right: 0,
+          textAlign: "center",
+          fontSize: 12,
+          color: "var(--color-ink-disabled)",
+          padding: "0 24px",
+        }}
+      >
+        Por ahora los gastos se registran a mano con el botón +. La detección automática desde Gmail llega en la próxima etapa.
+      </p>
       <FloatingAddButton />
     </main>
   );
