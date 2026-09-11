@@ -29,10 +29,14 @@ export default async function RootPage() {
 
   const { data: couple } = await supabase
     .from("couples")
-    .select("user_b_id")
+    .select("current_cycle_id")
     .or(`user_a_id.eq.${user.id},user_b_id.eq.${user.id}`)
     .maybeSingle();
-  if (!couple?.user_b_id) redirect("/onboarding/emparejar");
+  // Normalmente current_cycle_id solo existe tras emparejarse de verdad
+  // (PRD §5.7). También queda seteado si activó "probar sin pareja" —
+  // ver enable_solo_testing en 0009_solo_testing.sql (temporal, quitar
+  // antes de lanzar).
+  if (!couple?.current_cycle_id) redirect("/onboarding/emparejar");
 
   redirect("/hoy");
 }

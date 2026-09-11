@@ -56,13 +56,17 @@ Estas son inferencias técnicas razonables sobre huecos del PRD, no cambios de p
 - **Confianza del parseo de correos = chequeo determinístico, no un score de Gemini**: se le pide un booleano "¿es notificación de pago?" + los campos, y la confianza real es `monto > 0 AND comercio no vacío AND es_notificacion_de_pago`. Pedirle a un LLM un número de confianza calibrado no es confiable.
 - **Renovación del `watch()` con Vercel Cron** (`vercel.json`, diario): el `watch()` de Gmail expira a los 7 días. Se intenta activar también en el login mismo (best-effort, no rompe el login si Pub/Sub aún no está configurado).
 
-## Pendiente para que M3 funcione en vivo (setup externo en Google Cloud)
+## Setup externo de M3 (Google Cloud) — ✅ hecho (2026-09-11)
 
-1. **Copiar el Client ID/Secret de Google** (los mismos que ya se usaron para configurar el proveedor Google en Supabase, Google Cloud Console → Credentials) a las variables `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` — hacen falta para refrescar el access token nosotros mismos, sin pasar por Supabase.
-2. **Crear un tema de Pub/Sub** en el mismo proyecto de Google Cloud: Pub/Sub → Topics → Create Topic (ej. `gmail-notifications`). El nombre completo (`projects/<PROJECT_ID>/topics/gmail-notifications`) va en `GMAIL_PUBSUB_TOPIC`.
-3. **Darle permiso a Gmail para publicar en ese tema**: en el topic → Permissions → Add Principal → `gmail-api-push@system.gserviceaccount.com` con el rol "Pub/Sub Publisher".
-4. **Crear una suscripción push** sobre ese tema, apuntando a `https://<tu-vercel>/api/gmail/webhook?token=<GMAIL_WEBHOOK_SECRET>` (el secreto ya generado queda en `.env.local`/Vercel).
-5. **Variables de entorno en Vercel**: agregar las mismas que están en `.env.local.example` (incluida `CRON_SECRET`, ya generado) al proyecto de Vercel.
+Los 5 pasos (Client ID/Secret, tema de Pub/Sub `gmail-notifications`, permiso de Gmail para publicar, suscripción push al webhook, variables en Vercel) ya se completaron contra el proyecto real de Google Cloud (`ambos-project-508215`). Pendiente: probar el pipeline de punta a punta con un pago real y confirmar que aparece en Clasificar.
+
+## Modo de prueba solo, sin pareja — TEMPORAL (2026-09-11)
+
+Marco no tiene 2 celulares/correos a mano para probar el flujo de pareja completo ahora mismo. Se agregó un botón **"Probar la app sin pareja por ahora"** en `/onboarding/emparejar` (pantalla de "esperando pareja") que activa un ciclo abierto sin necesidad de que alguien se una con el código.
+
+- Migración `0009_solo_testing.sql`: función `enable_solo_testing()` — crea el primer ciclo del `couple` aunque `user_b_id` siga vacío (normalmente el ciclo nace recién al emparejarse, PRD §5.7).
+- `app/page.tsx`: el redirect a onboarding ahora depende de si ya existe un ciclo abierto (`current_cycle_id`), no de si ya hay pareja — así deja pasar tanto al emparejado real como al que activó el modo de prueba.
+- **Quitar antes de invitar usuarios reales**: el botón de saltar, la función `enable_solo_testing`, y borrar cualquier `couple`/`cycle` huérfano de prueba que haya quedado solo (sin `user_b_id`). Si Marco luego se empareja de verdad, `redeem_invite_code` crea un ciclo nuevo como siempre — el de prueba queda abierto y huérfano, no se liquida solo.
 
 ## M2 — validado en vivo contra el proyecto real (2026-09-10)
 

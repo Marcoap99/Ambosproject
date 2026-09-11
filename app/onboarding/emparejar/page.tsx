@@ -39,7 +39,7 @@ export default function EmparejarPage() {
 
     const { data: couple } = await supabase
       .from("couples")
-      .select("invite_code, user_b_id")
+      .select("invite_code, user_b_id, current_cycle_id")
       .or(`user_a_id.eq.${user.id},user_b_id.eq.${user.id}`)
       .maybeSingle();
 
@@ -47,8 +47,19 @@ export default function EmparejarPage() {
       setState({ status: "none" });
       return;
     }
-    if (!couple.user_b_id) {
+    if (!couple.user_b_id && !couple.current_cycle_id) {
       setState({ status: "waiting", inviteCode: couple.invite_code });
+      return;
+    }
+    router.push("/hoy");
+  }
+
+  async function handleSkipPairing() {
+    setError(null);
+    const supabase = createClient();
+    const { error: rpcError } = await supabase.rpc("enable_solo_testing");
+    if (rpcError) {
+      setError("No se pudo activar el modo de prueba. Intenta de nuevo.");
       return;
     }
     router.push("/hoy");
@@ -118,6 +129,18 @@ export default function EmparejarPage() {
         >
           ¿Tu pareja ya tiene un código? Ingrésalo acá
         </button>
+        <p style={{ marginTop: 32, fontSize: 12, color: "var(--color-ink-disabled)" }}>
+          Modo de prueba temporal
+        </p>
+        <button
+          type="button"
+          onClick={handleSkipPairing}
+          className="chip"
+          style={{ marginTop: 4 }}
+        >
+          Probar la app sin pareja por ahora
+        </button>
+        {error && <p className="error-text">{error}</p>}
       </main>
     );
   }
