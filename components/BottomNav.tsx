@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
+
+import { createClient } from "@/lib/supabase/client";
 
 const ITEMS = [
   { href: "/hoy", label: "Hoy" },
@@ -14,6 +16,13 @@ const ITEMS = [
 // DESIGN_SYSTEM.md §4 "Overlay/modal" — pantalla completa, no navegación).
 export function BottomNav() {
   const pathname = usePathname();
+  const router = useRouter();
+
+  async function handleSignOut() {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    router.push("/login");
+  }
 
   return (
     <nav
@@ -24,6 +33,7 @@ export function BottomNav() {
         right: 0,
         display: "flex",
         justifyContent: "space-around",
+        alignItems: "center",
         background: "var(--color-surface)",
         borderTop: "2px solid var(--color-border)",
         padding: "10px 0",
@@ -47,6 +57,20 @@ export function BottomNav() {
           </Link>
         );
       })}
+      <button
+        type="button"
+        onClick={handleSignOut}
+        style={{
+          fontSize: 12,
+          color: "var(--color-ink-disabled)",
+          background: "none",
+          border: "none",
+          textDecoration: "underline",
+          cursor: "pointer",
+        }}
+      >
+        Salir
+      </button>
     </nav>
   );
 }
