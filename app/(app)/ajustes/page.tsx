@@ -45,6 +45,7 @@ export default function AjustesPage() {
   const [gmailConnected, setGmailConnected] = useState<boolean | null>(null);
   const [pushStatus, setPushStatus] = useState<PushStatus | null>(null);
   const [pushBusy, setPushBusy] = useState(false);
+  const [pushError, setPushError] = useState<string | null>(null);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -99,10 +100,12 @@ export default function AjustesPage() {
   async function handleTogglePush() {
     if (!profile) return;
     setPushBusy(true);
+    setPushError(null);
     if (pushStatus === "subscribed") {
       await disablePushReminder();
     } else {
-      await enablePushReminder(profile.id);
+      const ok = await enablePushReminder(profile.id);
+      if (!ok) setPushError("No se pudo activar el recordatorio. Intenta de nuevo.");
     }
     setPushStatus(await getPushStatus());
     setPushBusy(false);
@@ -222,6 +225,7 @@ export default function AjustesPage() {
             {pushStatus === "subscribed" ? "Desactivar" : "Activar recordatorio a las 8pm"}
           </button>
         )}
+        {pushError && <p className="error-text">{pushError}</p>}
       </Section>
 
       <Section title="Ayuda">
