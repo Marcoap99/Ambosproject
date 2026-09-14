@@ -95,6 +95,16 @@ function extractPlainText(payload: {
   return "";
 }
 
+/** Revoca el refresh token en Google (borrar cuenta, PRD §8). Best-effort — si
+ * Google ya lo había invalidado por su cuenta, revoke() igual responde 200. */
+export async function revokeToken(token: string): Promise<void> {
+  await fetch("https://oauth2.googleapis.com/revoke", {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({ token }),
+  });
+}
+
 export async function getMessage(accessToken: string, messageId: string): Promise<GmailMessage | null> {
   const res = await fetch(`${GMAIL_API}/users/me/messages/${messageId}?format=full`, {
     headers: { Authorization: `Bearer ${accessToken}` },
