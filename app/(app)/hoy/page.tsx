@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { FloatingAddButton } from "@/components/FloatingAddButton";
+import { LoadingScreen } from "@/components/LoadingScreen";
 import { shouldShowGraceBanner, weeklyStreak } from "@/lib/checkin";
 import { addDays, getLocalDateString, yesterdayOf } from "@/lib/date";
 import { createClient } from "@/lib/supabase/client";
@@ -53,7 +54,7 @@ export default function HoyPage() {
   }
 
   if (app.loading || checkIns === null) {
-    return null;
+    return <LoadingScreen />;
   }
 
   const checkInDates = new Set(checkIns.map((c) => c.fecha));

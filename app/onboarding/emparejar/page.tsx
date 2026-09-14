@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
+import { LoadingScreen } from "@/components/LoadingScreen";
 import { createClient } from "@/lib/supabase/client";
 
 // Depende de la sesión del usuario — nunca se pre-renderiza estático.
@@ -91,7 +92,7 @@ export default function EmparejarPage() {
     router.push("/hoy");
   }
 
-  if (state.status === "loading") return null;
+  if (state.status === "loading") return <LoadingScreen />;
 
   if (state.status === "waiting" && !switchingToRedeem) {
     const waMessage = encodeURIComponent(

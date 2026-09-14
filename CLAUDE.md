@@ -23,7 +23,7 @@ Un solo OAuth de Google en el registro, pidiendo el scope `gmail.readonly` de un
 | M1 | 🟢 hecho | Migraciones (§6) + RLS que fuerza §7.4 a nivel de BD, emparejamiento con invite code, `lib/balance.ts` con tests (§7.1–7.3), login con Google (scope Gmail pedido, pipeline sin activar), onboarding (nombre, medios de pago, emparejar) |
 | M2 | 🟢 hecho | Check-in, registro manual (Gemini), Clasificar, Saldo, Historial, Liquidar (con comprobante en Storage), Ciclos |
 | M3 | 🟡 en progreso | Código del pipeline Gmail hecho + setup externo de Google Cloud completado. Falta confirmar en vivo que un pago real llega a Clasificar |
-| M4 | 🟡 en progreso | Hecho: pantalla de Ajustes (§5.8), borrar cuenta (§8), recordatorio push a las 8pm (§5.2, código listo — falta un paso manual en Vercel, ver abajo). Falta: estados vacíos/loading. hug.jpg se deja como está (decisión de Marco, 2026-09-14) |
+| M4 | 🟢 código hecho | Ajustes (§5.8), borrar cuenta (§8), recordatorio push a las 8pm (§5.2 — código listo, falta 1 paso manual en Vercel, ver abajo), estados de carga en todas las pantallas (antes quedaban en blanco un momento). Los estados vacíos ("todavía no hay nada") ya existían desde M2. hug.jpg se deja como está (decisión de Marco, 2026-09-14) |
 
 ## Reglas duras — nunca romper
 
@@ -65,6 +65,7 @@ Estas son inferencias técnicas razonables sobre huecos del PRD, no cambios de p
 - **Push VAPID sin consola externa**: a diferencia de Gmail (Google Cloud) o Auth (Supabase), el par de llaves VAPID se generó una sola vez localmente (`web-push generate-vapid-keys`) — no hay ningún panel de terceros que configurar, solo copiar las 2 llaves a Vercel (ver checklist abajo).
 - **Service worker nuevo** (`public/sw.js`): el M0 nunca había llegado a crear uno (solo el manifest) — se agregó el mínimo necesario para recibir push y abrir la app al tocar la notificación, sin estrategia de cache (fuera de alcance de M4).
 - **Recordatorio por usuario, no por Couple**: el cron revisa `check_ins` (por `user_id`), así que cada persona de la pareja recibe su propio recordatorio si a las 8pm no contestó — aunque su pareja ya haya contestado por los dos.
+- **`components/LoadingScreen.tsx`**: todas las pantallas que hacen su primer fetch en un `useEffect` (Hoy, Clasificar, Saldo, Historial, Ciclos, Ajustes, Emparejar) hacían `return null` mientras cargaban — quedaban en blanco un instante. Se reemplazó por un estado de carga visual compartido (3 puntos, mismo lenguaje que los puntos de racha de Hoy). Los estados vacíos ("todavía no hay nada acá", "no detectamos gastos hoy", etc.) ya existían desde M2 — no hacía falta agregarlos.
 
 ## Pendiente para que el recordatorio push funcione en vivo
 

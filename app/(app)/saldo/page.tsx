@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
+import { LoadingScreen } from "@/components/LoadingScreen";
 import { calculateBalance, totalCompartido, type MovementForBalance } from "@/lib/balance";
 import { getLocalDateString } from "@/lib/date";
 import { createClient } from "@/lib/supabase/client";
@@ -41,7 +42,7 @@ export default function SaldoPage() {
     void loadBalance(app.coupleId, app.cycleId);
   }, [app.coupleId, app.cycleId]);
 
-  if (app.loading || movements === null || !app.userId) return null;
+  if (app.loading || movements === null || !app.userId) return <LoadingScreen />;
 
   const { net, label } = calculateBalance(movements, app.userId);
 
