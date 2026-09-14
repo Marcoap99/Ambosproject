@@ -27,6 +27,10 @@ export async function getPushStatus(): Promise<PushStatus> {
 }
 
 export async function enablePushReminder(userId: string): Promise<boolean> {
+  // Si todavía no se agregó NEXT_PUBLIC_VAPID_PUBLIC_KEY en Vercel (ver
+  // CLAUDE.md), evitar tirar una excepción sin capturar al suscribirse.
+  if (!process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY) return false;
+
   const permission = await Notification.requestPermission();
   if (permission !== "granted") return false;
 
