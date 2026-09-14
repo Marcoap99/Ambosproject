@@ -27,6 +27,17 @@
   --color-cat-salidas: #eb6834;
   --color-cat-transporte: #1baf7a;
   --color-cat-compras: #eda100;
+  /* Tintes de categoría (fondo del chip seleccionado) — valores exactos del mockup */
+  --color-cat-comida-tint: #E4EFFB;
+  --color-cat-salidas-tint: #FCEAE2;
+  --color-cat-transporte-tint: #E1F5EC;
+  --color-cat-compras-tint: #FCF1DC;
+
+  /* Chips de identidad (Personal/Pareja/categoría) — DESIGN_SYSTEM.md §4
+     "Chip de selección": borde de la identidad visible incluso sin
+     seleccionar. Valores exactos del mockup. */
+  --color-chip-border-neutral: #E9E2CF;
+  --color-pareja-border: #BFD8DE;
 
   /* Radios */
   --radius-card: 18px;

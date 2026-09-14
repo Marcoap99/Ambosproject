@@ -88,6 +88,23 @@ Marco no tiene 2 celulares/correos a mano para probar el flujo de pareja complet
 - `app/page.tsx`: el redirect a onboarding ahora depende de si ya existe un ciclo abierto (`current_cycle_id`), no de si ya hay pareja — así deja pasar tanto al emparejado real como al que activó el modo de prueba.
 - **Quitar antes de invitar usuarios reales**: el botón de saltar, la función `enable_solo_testing`, y borrar cualquier `couple`/`cycle` huérfano de prueba que haya quedado solo (sin `user_b_id`). Si Marco luego se empareja de verdad, `redeem_invite_code` crea un ciclo nuevo como siempre — el de prueba queda abierto y huérfano, no se liquida solo.
 
+## Pase de revisión visual/UX contra DESIGN_SYSTEM.md y el mockup (2026-09-14)
+
+Marco notó que la app no se parecía a sus mockups (`design/Main.dc.html`). Además del fix de fuentes (ver más abajo), hice una revisión línea por línea del mockup contra el build real y encontré + corregí:
+
+- **Chips de Personal/Pareja/categoría sin ícono ni color de identidad**: DESIGN_SYSTEM.md §4 pide ícono + color propio por chip, y "Pareja" debe distinguirse incluso sin seleccionar (para no confundirse con estar viendo el correo del otro, §7.4). El build usaba un solo estilo genérico (naranja) para cualquier chip seleccionado. Fix: `lib/labels.ts` (`classificationChipStyle`, `categoryChipStyle`) + `components/icons.tsx` (ícono de persona / dos personas, SVG trazo, sacado 1:1 del mockup) — aplicado en Clasificar, Historial y el confirm-card de Registrar. Colores exactos del mockup (no inventados): personal = tinta `ink` sólida al seleccionar, pareja = `--color-pareja` (teal), categoría = tinte suave + color sólido de esa categoría.
+- **`coin.jpg` (la mascota-moneda, DESIGN_SYSTEM.md §6) nunca se usaba** — debía aparecer en Clasificar (pregunta "¿fue personal o de los dos?") y en el chat de Registrar. Agregado en ambos.
+- **`/registrar` era un formulario, no un chat** — PRD §5.3 dice explícitamente "Interfaz de chat (no formulario)". Reescrito como burbujas de chat (bot con avatar de coin.jpg / usuario) + tarjeta de confirmación embebida, calcada del mockup, con pantalla de éxito (check + "¡Registrado!") en vez de solo volver atrás en silencio.
+- **Íconos de texto crudo** (`+` del botón flotante, `✕` de cerrar en Registrar) violaban DESIGN_SYSTEM.md §5 ("nunca emoji ni dingbats, todo ícono SVG trazo") — reemplazados por SVG inline sacados del mockup.
+- **Progreso "X de Y clasificados"** en Clasificar — existía en el mockup, no en el build; agregado como texto simple sobre el botón "Ver saldo".
+
+**Decisiones tomadas sin preguntar en este pase** (inferencias de implementación, no cambios de producto):
+- No se construyó "agregar categoría propia con emoji" (PRD §5.3) — además de ser una feature nueva no trivial, choca con DESIGN_SYSTEM.md §5 ("nunca emoji"); se deja pendiente de una decisión de producto explícita en vez de adivinar cuál gana.
+- No se agregó un badge/pill de estado "Abierto"/"Liquidado" en Ciclos (el mockup lo tiene) — pulido menor, no bloquea nada funcional, queda para un siguiente pase.
+- `dog-happy.jpg`, modo oscuro real y foto de perfil/avatar de género en onboarding **no se tocaron a propósito** — están explícitamente fuera de alcance del MVP (DESIGN_SYSTEM.md §7 y PRD §5.1/§9 respectivamente), no son bugs.
+
+**Validado**: `npm run lint` / `npx tsc --noEmit` / `npm test` / `npx next build` en verde. Además, capturé `/login` con Playwright para confirmar visualmente que las fuentes ya cargan bien (el resto de pantallas requieren sesión real, no se probaron visualmente en este sandbox — quedan para que Marco las revise en la app).
+
 ## Incidente: deploy de producción roto por M4 (2026-09-14, resuelto)
 
 Los PRs del recordatorio push y de estados de carga rompieron el build de Vercel apenas se mergearon (`lib/push.ts` llamaba `setVapidDetails()` al importar el módulo, y esa función tira si las llaves VAPID están vacías — cosa esperable ya que Marco todavía no las había puesto en Vercel). Se detectó por el check de Vercel en el PR, se corrigió de inmediato (configuración perezosa) y se confirmó reproduciendo el fallo localmente antes y después del fix. Deploy ya vuelve a compilar. Lección: nunca ejecutar código que dependa de env vars opcionales/nuevas a nivel de módulo — siempre adentro de la función que lo usa.

@@ -2,6 +2,8 @@
 
 import { useRouter } from "next/navigation";
 
+import { PlusIcon } from "@/components/icons";
+
 // Botón flotante de registro manual (PRD §5.5) — accesible desde Hoy y
 // Clasificar, para lo que el parser de Gmail no captura (o antes de M3,
 // para todo).
@@ -22,12 +24,14 @@ export function FloatingAddButton() {
         background: "var(--color-accent)",
         color: "#fff",
         border: "none",
-        fontSize: 28,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
         boxShadow: "0 4px 0 rgba(0,0,0,.12)",
         cursor: "pointer",
       }}
     >
-      +
+      <PlusIcon />
     </button>
   );
 }
