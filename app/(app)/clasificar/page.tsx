@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { FloatingAddButton } from "@/components/FloatingAddButton";
+import { LoadingScreen } from "@/components/LoadingScreen";
 import { splitLabel } from "@/lib/balance";
 import { getLocalDateString } from "@/lib/date";
 import { CATEGORIES, paymentMethodLabel } from "@/lib/labels";
@@ -63,7 +64,7 @@ export default function ClasificarPage() {
     await supabase.from("movements").update(dbPatch).eq("id", id);
   }
 
-  if (app.loading || movements === null) return null;
+  if (app.loading || movements === null) return <LoadingScreen />;
 
   const allClassified = movements.length > 0 && movements.every((m) => m.classification !== null);
 

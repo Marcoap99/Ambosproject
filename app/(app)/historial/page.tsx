@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 
 import { FloatingAddButton } from "@/components/FloatingAddButton";
+import { LoadingScreen } from "@/components/LoadingScreen";
 import { calculateBalance } from "@/lib/balance";
 import { CATEGORIES } from "@/lib/labels";
 import { createClient } from "@/lib/supabase/client";
@@ -74,7 +75,7 @@ export default function HistorialPage() {
     if (app.coupleId) await reload(app.coupleId);
   }
 
-  if (app.loading || movements === null || !app.userId) return null;
+  if (app.loading || movements === null || !app.userId) return <LoadingScreen />;
 
   const visibles = movements.filter((m) => {
     if (filtro === "yo") return m.user_id === app.userId;

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
+import { LoadingScreen } from "@/components/LoadingScreen";
 import { disablePushReminder, enablePushReminder, getPushStatus, type PushStatus } from "@/lib/pushClient";
 import { createClient } from "@/lib/supabase/client";
 
@@ -150,7 +151,7 @@ export default function AjustesPage() {
     router.push("/login");
   }
 
-  if (!profile) return null;
+  if (!profile) return <LoadingScreen />;
 
   return (
     <main style={{ padding: 24, maxWidth: 480, margin: "0 auto", paddingBottom: 64 }}>

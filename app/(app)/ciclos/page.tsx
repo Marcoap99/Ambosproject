@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 
+import { LoadingScreen } from "@/components/LoadingScreen";
 import { CATEGORIES, CATEGORY_COLORS } from "@/lib/labels";
 import { createClient } from "@/lib/supabase/client";
 import { useAppData } from "@/lib/useAppData";
@@ -79,7 +80,7 @@ export default function CiclosPage() {
     void load(app.coupleId, app.cycleId);
   }, [app.coupleId, app.cycleId]);
 
-  if (app.loading || liquidados === null) return null;
+  if (app.loading || liquidados === null) return <LoadingScreen />;
 
   const diasAbierto = cicloAbiertoInicio
     ? diasEntre(cicloAbiertoInicio, new Date().toISOString())
