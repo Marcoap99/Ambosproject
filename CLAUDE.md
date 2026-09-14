@@ -88,6 +88,10 @@ Marco no tiene 2 celulares/correos a mano para probar el flujo de pareja complet
 - `app/page.tsx`: el redirect a onboarding ahora depende de si ya existe un ciclo abierto (`current_cycle_id`), no de si ya hay pareja — así deja pasar tanto al emparejado real como al que activó el modo de prueba.
 - **Quitar antes de invitar usuarios reales**: el botón de saltar, la función `enable_solo_testing`, y borrar cualquier `couple`/`cycle` huérfano de prueba que haya quedado solo (sin `user_b_id`). Si Marco luego se empareja de verdad, `redeem_invite_code` crea un ciclo nuevo como siempre — el de prueba queda abierto y huérfano, no se liquida solo.
 
+## Incidente: deploy de producción roto por M4 (2026-09-14, resuelto)
+
+Los PRs del recordatorio push y de estados de carga rompieron el build de Vercel apenas se mergearon (`lib/push.ts` llamaba `setVapidDetails()` al importar el módulo, y esa función tira si las llaves VAPID están vacías — cosa esperable ya que Marco todavía no las había puesto en Vercel). Se detectó por el check de Vercel en el PR, se corrigió de inmediato (configuración perezosa) y se confirmó reproduciendo el fallo localmente antes y después del fix. Deploy ya vuelve a compilar. Lección: nunca ejecutar código que dependa de env vars opcionales/nuevas a nivel de módulo — siempre adentro de la función que lo usa.
+
 ## M2 — validado en vivo contra el proyecto real (2026-09-10)
 
 Prueba de extremo a extremo con 4 usuarios de prueba (email/password, sin pasar por Google) directo contra Supabase real: emparejamiento, privacidad §7.4, saldo bidireccional §7.1, check-in, liquidar ciclo. Se encontraron y arreglaron 3 problemas reales en el camino:
