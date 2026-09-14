@@ -23,7 +23,7 @@ Un solo OAuth de Google en el registro, pidiendo el scope `gmail.readonly` de un
 | M1 | 🟢 hecho | Migraciones (§6) + RLS que fuerza §7.4 a nivel de BD, emparejamiento con invite code, `lib/balance.ts` con tests (§7.1–7.3), login con Google (scope Gmail pedido, pipeline sin activar), onboarding (nombre, medios de pago, emparejar) |
 | M2 | 🟢 hecho | Check-in, registro manual (Gemini), Clasificar, Saldo, Historial, Liquidar (con comprobante en Storage), Ciclos |
 | M3 | 🟡 en progreso | Código del pipeline Gmail hecho + setup externo de Google Cloud completado. Falta confirmar en vivo que un pago real llega a Clasificar |
-| M4 | 🟡 en progreso | Hecho: pantalla de Ajustes (§5.8) con apodo, estado de pareja, Gmail conectado, cerrar sesión, FAQ y borrar cuenta (§8). Falta: Push VAPID (recordatorio 8pm), estados vacíos/loading, hug.jpg se deja como está (decisión de Marco, 2026-09-14) |
+| M4 | 🟡 en progreso | Hecho: pantalla de Ajustes (§5.8), borrar cuenta (§8), recordatorio push a las 8pm (§5.2, código listo — falta un paso manual en Vercel, ver abajo). Falta: estados vacíos/loading. hug.jpg se deja como está (decisión de Marco, 2026-09-14) |
 
 ## Reglas duras — nunca romper
 
@@ -62,6 +62,18 @@ Estas son inferencias técnicas razonables sobre huecos del PRD, no cambios de p
 - **Nuevo endpoint `/api/account/gmail-status`**: como `gmail_credentials` no tiene policies de RLS para `authenticated` (a propósito, ver M3), Ajustes no puede preguntarle directo a Supabase si Gmail ya está conectado — necesita este endpoint con la service role.
 - **Modo oscuro (PRD §5.8) no se implementó**: el PRD mismo lo marca como "placeholder visual únicamente... no bloquea el MVP" — se deja fuera de este build.
 - **hug.jpg se deja con la copa de vino** (decisión de Marco, 2026-09-14): no bloquea nada funcional, queda para un pase de pulido visual futuro si se decide.
+- **Push VAPID sin consola externa**: a diferencia de Gmail (Google Cloud) o Auth (Supabase), el par de llaves VAPID se generó una sola vez localmente (`web-push generate-vapid-keys`) — no hay ningún panel de terceros que configurar, solo copiar las 2 llaves a Vercel (ver checklist abajo).
+- **Service worker nuevo** (`public/sw.js`): el M0 nunca había llegado a crear uno (solo el manifest) — se agregó el mínimo necesario para recibir push y abrir la app al tocar la notificación, sin estrategia de cache (fuera de alcance de M4).
+- **Recordatorio por usuario, no por Couple**: el cron revisa `check_ins` (por `user_id`), así que cada persona de la pareja recibe su propio recordatorio si a las 8pm no contestó — aunque su pareja ya haya contestado por los dos.
+
+## Pendiente para que el recordatorio push funcione en vivo
+
+Agregar a Vercel (Settings → Environment Variables, en Production) estas 3 variables nuevas — ya están en `.env.local` de este sandbox, cópialas de ahí o pídemelas:
+- `NEXT_PUBLIC_VAPID_PUBLIC_KEY`
+- `VAPID_PRIVATE_KEY`
+- `VAPID_SUBJECT`
+
+Después de agregarlas, hace falta un redeploy (igual que con las otras variables de M3).
 
 ## Setup externo de M3 (Google Cloud) — ✅ hecho (2026-09-11)
 

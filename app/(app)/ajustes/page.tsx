@@ -4,12 +4,14 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
+import { disablePushReminder, enablePushReminder, getPushStatus, type PushStatus } from "@/lib/pushClient";
 import { createClient } from "@/lib/supabase/client";
 
 // Depende de la sesión del usuario — nunca se pre-renderiza estático.
 export const dynamic = "force-dynamic";
 
 interface Profile {
+  id: string;
   email: string;
   nombre: string;
 }
@@ -40,6 +42,8 @@ export default function AjustesPage() {
   const [savingNombre, setSavingNombre] = useState(false);
   const [couple, setCouple] = useState<CoupleInfo | "sinPareja" | null>(null);
   const [gmailConnected, setGmailConnected] = useState<boolean | null>(null);
+  const [pushStatus, setPushStatus] = useState<PushStatus | null>(null);
+  const [pushBusy, setPushBusy] = useState(false);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -59,7 +63,7 @@ export default function AjustesPage() {
       .select("nombre")
       .eq("id", user.id)
       .single();
-    setProfile({ email: user.email ?? "", nombre: userRow?.nombre ?? "" });
+    setProfile({ id: user.id, email: user.email ?? "", nombre: userRow?.nombre ?? "" });
     setNombreDraft(userRow?.nombre ?? "");
 
     const { data: coupleRow } = await supabase
@@ -87,6 +91,20 @@ export default function AjustesPage() {
     const gmailRes = await fetch("/api/account/gmail-status");
     const gmailData = await gmailRes.json();
     setGmailConnected(!!gmailData.connected);
+
+    setPushStatus(await getPushStatus());
+  }
+
+  async function handleTogglePush() {
+    if (!profile) return;
+    setPushBusy(true);
+    if (pushStatus === "subscribed") {
+      await disablePushReminder();
+    } else {
+      await enablePushReminder(profile.id);
+    }
+    setPushStatus(await getPushStatus());
+    setPushBusy(false);
   }
 
   useEffect(() => {
@@ -187,6 +205,22 @@ export default function AjustesPage() {
               ? "Conectado — detectamos tus notificaciones de pago automáticamente."
               : "Sin conectar todavía. Vuelve a entrar con Google para activarlo."}
         </p>
+      </Section>
+
+      <Section title="Recordatorio diario">
+        <p style={{ color: "var(--color-ink-muted)", fontSize: 14, marginBottom: 8 }}>
+          {pushStatus === "unsupported" &&
+            "Tu navegador no soporta notificaciones push."}
+          {pushStatus === "denied" &&
+            "Bloqueaste las notificaciones — actívalas desde los ajustes del navegador para usar esto."}
+          {(pushStatus === "subscribed" || pushStatus === "not-subscribed") &&
+            "Un aviso a las 8pm si todavía no contestaste el check-in del día."}
+        </p>
+        {(pushStatus === "subscribed" || pushStatus === "not-subscribed") && (
+          <button type="button" className="chip" disabled={pushBusy} onClick={handleTogglePush}>
+            {pushStatus === "subscribed" ? "Desactivar" : "Activar recordatorio a las 8pm"}
+          </button>
+        )}
       </Section>
 
       <Section title="Ayuda">

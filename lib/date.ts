@@ -33,3 +33,11 @@ export function last7Days(today: string): string[] {
   for (let i = 6; i >= 0; i--) days.push(addDays(today, -i));
   return days;
 }
+
+/** Solo para el cron de recordatorio push (server-side, PRD §5.2): el MVP es
+ * solo Perú, así que a diferencia de getLocalDateString (que es del
+ * dispositivo del usuario) acá fijamos America/Lima explícito — el server
+ * de Vercel corre en UTC, no en la zona del usuario. */
+export function getPeruDateString(date: Date = new Date()): string {
+  return new Intl.DateTimeFormat("en-CA", { timeZone: "America/Lima" }).format(date);
+}
