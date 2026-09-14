@@ -34,9 +34,10 @@
   --radius-pill: 999px;
   --radius-input: 16px;
 
-  /* Tipografía */
-  --font-display: "Architects Daughter", cursive;
-  --font-ui: "IBM Plex Sans", sans-serif;
+  /* Tipografía — las variables --font-architects-daughter/--font-ibm-plex-sans
+     las genera next/font (ver app/layout.tsx), no son nombres de familia. */
+  --font-display: var(--font-architects-daughter), cursive;
+  --font-ui: var(--font-ibm-plex-sans), sans-serif;
 }
 
 * {
