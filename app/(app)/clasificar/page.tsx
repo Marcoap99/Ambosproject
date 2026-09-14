@@ -1,14 +1,16 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { FloatingAddButton } from "@/components/FloatingAddButton";
 import { LoadingScreen } from "@/components/LoadingScreen";
+import { PeopleIcon, PersonIcon } from "@/components/icons";
 import { splitLabel } from "@/lib/balance";
 import { getLocalDateString } from "@/lib/date";
-import { CATEGORIES, paymentMethodLabel } from "@/lib/labels";
+import { CATEGORIES, categoryChipStyle, classificationChipStyle, paymentMethodLabel } from "@/lib/labels";
 import { createClient } from "@/lib/supabase/client";
 import { type PaymentMethod, useAppData } from "@/lib/useAppData";
 
@@ -85,7 +87,24 @@ export default function ClasificarPage() {
         </div>
       )}
 
-      <div style={{ display: "grid", gap: 12, marginTop: 16 }}>
+      {movements.length > 0 && (
+        <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 16 }}>
+          <Image
+            src="/assets/coin.jpg"
+            alt=""
+            width={34}
+            height={34}
+            style={{ borderRadius: 10, objectFit: "cover", flex: "none" }}
+          />
+          <p className="font-display" style={{ margin: 0, fontSize: 16, lineHeight: 1.25 }}>
+            Esto es tuyo, hoy.
+            <br />
+            ¿Fue personal o de los dos?
+          </p>
+        </div>
+      )}
+
+      <div style={{ display: "grid", gap: 12, marginTop: 12 }}>
         {movements.map((m) => (
           <MovementCard
             key={m.id}
@@ -97,7 +116,10 @@ export default function ClasificarPage() {
       </div>
 
       {movements.length > 0 && (
-        <div style={{ textAlign: "center", marginTop: 24 }}>
+        <div style={{ textAlign: "center", marginTop: 16 }}>
+          <p style={{ fontSize: 12, color: "var(--color-ink-muted)", marginBottom: 12 }}>
+            {movements.filter((m) => m.classification !== null).length} de {movements.length} clasificados
+          </p>
           <button
             className="button-primary"
             disabled={!allClassified}
@@ -150,18 +172,18 @@ function MovementCard({
         <button
           type="button"
           className="chip"
-          data-selected={movement.classification === "personal"}
+          style={{ flex: 1, justifyContent: "center", ...classificationChipStyle("personal", movement.classification === "personal") }}
           onClick={() => onChange({ classification: "personal" })}
         >
-          Personal
+          <PersonIcon /> Personal
         </button>
         <button
           type="button"
           className="chip"
-          data-selected={movement.classification === "pareja"}
+          style={{ flex: 1, justifyContent: "center", ...classificationChipStyle("pareja", movement.classification === "pareja") }}
           onClick={() => onChange({ classification: "pareja", split_ratio: movement.split_ratio ?? 0.5 })}
         >
-          Pareja
+          <PeopleIcon /> Pareja
         </button>
       </div>
 
@@ -188,9 +210,8 @@ function MovementCard({
             key={cat}
             type="button"
             className="chip"
-            data-selected={movement.category === cat}
             onClick={() => onChange({ category: movement.category === cat ? null : cat })}
-            style={{ fontSize: 12, padding: "5px 10px" }}
+            style={{ fontSize: 12, padding: "5px 10px", ...categoryChipStyle(cat, movement.category === cat) }}
           >
             {cat}
           </button>

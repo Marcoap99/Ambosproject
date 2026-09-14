@@ -4,8 +4,9 @@ import { useEffect, useState } from "react";
 
 import { FloatingAddButton } from "@/components/FloatingAddButton";
 import { LoadingScreen } from "@/components/LoadingScreen";
+import { PeopleIcon, PersonIcon } from "@/components/icons";
 import { calculateBalance } from "@/lib/balance";
-import { CATEGORIES } from "@/lib/labels";
+import { CATEGORIES, categoryChipStyle, classificationChipStyle } from "@/lib/labels";
 import { createClient } from "@/lib/supabase/client";
 import { useAppData } from "@/lib/useAppData";
 
@@ -218,28 +219,25 @@ function HistorialItem({
           <button
             type="button"
             className="chip"
-            data-selected={movement.classification === "personal"}
-            style={{ fontSize: 12, padding: "5px 10px" }}
+            style={{ fontSize: 12, padding: "5px 10px", ...classificationChipStyle("personal", movement.classification === "personal") }}
             onClick={() => onChange({ classification: "personal" })}
           >
-            Personal
+            <PersonIcon size={12} /> Personal
           </button>
           <button
             type="button"
             className="chip"
-            data-selected={movement.classification === "pareja"}
-            style={{ fontSize: 12, padding: "5px 10px" }}
+            style={{ fontSize: 12, padding: "5px 10px", ...classificationChipStyle("pareja", movement.classification === "pareja") }}
             onClick={() => onChange({ classification: "pareja" })}
           >
-            Pareja
+            <PeopleIcon size={12} /> Pareja
           </button>
           {CATEGORIES.map((cat) => (
             <button
               key={cat}
               type="button"
               className="chip"
-              data-selected={movement.category === cat}
-              style={{ fontSize: 12, padding: "5px 10px" }}
+              style={{ fontSize: 12, padding: "5px 10px", ...categoryChipStyle(cat, movement.category === cat) }}
               onClick={() => onChange({ category: movement.category === cat ? null : cat })}
             >
               {cat}
