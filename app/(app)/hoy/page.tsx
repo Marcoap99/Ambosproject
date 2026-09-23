@@ -126,7 +126,7 @@ export default function HoyPage() {
       )}
 
       {todayCheckIn?.tuvo_gastos === false && (
-        <>
+        <div className="card-enter">
           <Image
             src="/assets/dog-worried.jpg"
             alt=""
@@ -137,16 +137,16 @@ export default function HoyPage() {
           <p style={{ color: "var(--color-ink-muted)" }}>
             Anotado — hoy no hubo gastos compartidos.
           </p>
-        </>
+        </div>
       )}
 
       {todayCheckIn?.tuvo_gastos === true && (
-        <>
+        <div className="card-enter">
           <p style={{ color: "var(--color-ink-muted)" }}>Ya contestaste que sí hoy.</p>
           <button className="button-primary" onClick={() => router.push("/clasificar")}>
             Ir a clasificar
           </button>
-        </>
+        </div>
       )}
 
       <p
@@ -179,6 +179,7 @@ function StreakRow({ week }: { week: { fecha: string; respondido: boolean }[] })
             height: 10,
             borderRadius: "999px",
             background: d.respondido ? "var(--color-accent-gold)" : "var(--color-border)",
+            transition: "background-color 200ms ease",
           }}
         />
       ))}

@@ -124,10 +124,11 @@ export default function HistorialPage() {
       )}
 
       <div style={{ display: "grid", gap: 10 }}>
-        {visibles.map((m) => (
+        {visibles.map((m, i) => (
           <HistorialItem
             key={m.id}
             movement={m}
+            index={i}
             isOwn={m.user_id === app.userId}
             isEditable={m.user_id === app.userId && m.cycle_id === app.cycleId}
             onChange={(patch) => updateMovement(m, patch)}
@@ -167,6 +168,9 @@ function BalanceBar({ net }: { net: number }) {
             background: net === 0 ? "var(--color-positivo)" : net > 0 ? "var(--color-accent)" : "var(--color-pareja)",
             border: "3px solid white",
             boxShadow: "0 1px 3px rgba(0,0,0,.2)",
+            // El marcador se mueve/cambia de color cuando cambia el saldo
+            // (reclasificar, borrar un gasto) — sin esto salta de golpe.
+            transition: "left 300ms var(--ease-in-out), background-color 200ms ease",
           }}
         />
       </div>
@@ -176,12 +180,14 @@ function BalanceBar({ net }: { net: number }) {
 
 function HistorialItem({
   movement,
+  index,
   isOwn,
   isEditable,
   onChange,
   onDelete,
 }: {
   movement: Movement;
+  index: number;
   isOwn: boolean;
   isEditable: boolean;
   onChange: (patch: Partial<Movement>) => void;
@@ -194,6 +200,7 @@ function HistorialItem({
 
   return (
     <div
+      className="card-enter"
       style={{
         background: "var(--color-surface)",
         border: "2px solid var(--color-border)",
@@ -201,6 +208,7 @@ function HistorialItem({
         padding: 14,
         display: "grid",
         gap: 8,
+        animationDelay: `${Math.min(index, 6) * 40}ms`,
       }}
     >
       <div style={{ display: "flex", justifyContent: "space-between" }}>

@@ -129,6 +129,7 @@ export default function RegistrarPage() {
 
       {step === "hecho" ? (
         <div
+          className="card-enter"
           style={{
             flex: 1,
             display: "flex",
@@ -141,6 +142,7 @@ export default function RegistrarPage() {
           }}
         >
           <div
+            className="check-pop"
             style={{
               width: 84,
               height: 84,
@@ -243,7 +245,7 @@ export default function RegistrarPage() {
 
 function BotMessage({ children }: { children: React.ReactNode }) {
   return (
-    <div style={{ display: "flex", gap: 8, alignItems: "flex-end" }}>
+    <div className="card-enter" style={{ display: "flex", gap: 8, alignItems: "flex-end" }}>
       <Image
         src="/assets/coin.jpg"
         alt=""
@@ -271,7 +273,7 @@ function BotMessage({ children }: { children: React.ReactNode }) {
 
 function UserMessage({ children }: { children: React.ReactNode }) {
   return (
-    <div style={{ display: "flex", justifyContent: "flex-end" }}>
+    <div className="card-enter" style={{ display: "flex", justifyContent: "flex-end" }}>
       <div
         style={{
           maxWidth: "82%",

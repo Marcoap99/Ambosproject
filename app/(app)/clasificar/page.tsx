@@ -105,10 +105,11 @@ export default function ClasificarPage() {
       )}
 
       <div style={{ display: "grid", gap: 12, marginTop: 12 }}>
-        {movements.map((m) => (
+        {movements.map((m, i) => (
           <MovementCard
             key={m.id}
             movement={m}
+            index={i}
             paymentMethods={app.paymentMethods}
             onChange={(patch) => updateMovement(m.id, patch)}
           />
@@ -136,10 +137,12 @@ export default function ClasificarPage() {
 
 function MovementCard({
   movement,
+  index,
   paymentMethods,
   onChange,
 }: {
   movement: Movement;
+  index: number;
   paymentMethods: PaymentMethod[];
   onChange: (patch: Partial<Movement>) => void;
 }) {
@@ -151,6 +154,7 @@ function MovementCard({
 
   return (
     <div
+      className="card-enter"
       style={{
         background: "var(--color-surface)",
         border: "2px solid var(--color-border)",
@@ -158,6 +162,9 @@ function MovementCard({
         padding: 14,
         display: "grid",
         gap: 12,
+        // Stagger — cada tarjeta entra un poco después de la anterior (tope
+        // en 6 para que una lista larga no tarde eterno en terminar de entrar).
+        animationDelay: `${Math.min(index, 6) * 40}ms`,
       }}
     >
       <div style={{ display: "flex", justifyContent: "space-between" }}>
@@ -188,7 +195,7 @@ function MovementCard({
       </div>
 
       {movement.classification === "pareja" && (
-        <div>
+        <div className="card-enter">
           <input
             type="range"
             min={0}
