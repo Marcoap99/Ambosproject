@@ -20,3 +20,9 @@ supabase/.temp
 .DS_Store
 *.log
 npm-debug.log*
+
+# Claude Code — local-only permissions, y el binario compilado del auditor
+# de diseño impeccable (16MB, específico de linux-x64, regenerable con
+# `npx impeccable install`) — la docs/skill sí se comitea, el binario no.
+.claude/settings.local.json
+.claude/skills/impeccable/scripts/bin/
