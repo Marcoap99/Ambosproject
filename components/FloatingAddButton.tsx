@@ -14,6 +14,7 @@ export function FloatingAddButton() {
       type="button"
       onClick={() => router.push("/registrar")}
       aria-label="Registrar gasto"
+      className="fab-press"
       style={{
         position: "fixed",
         bottom: 76,

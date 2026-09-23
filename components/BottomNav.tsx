@@ -43,6 +43,7 @@ export function BottomNav() {
               fontWeight: active ? 700 : 500,
               color: active ? "var(--color-accent)" : "var(--color-ink-disabled)",
               textDecoration: "none",
+              transition: "color 150ms ease",
             }}
           >
             {item.label}

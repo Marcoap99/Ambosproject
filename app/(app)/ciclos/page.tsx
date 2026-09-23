@@ -154,9 +154,10 @@ export default function CiclosPage() {
           </p>
         ) : (
           <div style={{ display: "grid", gap: 10 }}>
-            {liquidados.map((c) => (
+            {liquidados.map((c, i) => (
               <div
                 key={c.id}
+                className="card-enter"
                 style={{
                   background: "var(--color-surface)",
                   border: "2px solid var(--color-border)",
@@ -165,6 +166,7 @@ export default function CiclosPage() {
                   display: "flex",
                   justifyContent: "space-between",
                   alignItems: "center",
+                  animationDelay: `${Math.min(i, 6) * 40}ms`,
                 }}
               >
                 <div style={{ fontSize: 13 }}>

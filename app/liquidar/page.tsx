@@ -58,6 +58,7 @@ export default function LiquidarPage() {
           alt=""
           width={200}
           height={200}
+          className="check-pop"
           style={{ borderRadius: "var(--radius-card)", margin: "0 auto", height: "auto" }}
         />
         <h1 className="font-display">¡Ajustado!</h1>
